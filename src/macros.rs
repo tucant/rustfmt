@@ -1504,9 +1504,16 @@ fn format_html(
                 result.push_str(str_lit.symbol.as_str());
                 result.push_str("\"-->")
             },
-            Html::Open { tag } => {
+            Html::Open { tag, attrs } => {
                 result.push_str("<");
                 result.push_str(tag.as_str());
+                for (name, value) in attrs {
+                    result.push_str(" ");
+                    result.push_str(name.as_str());
+                    result.push_str(&value.rewrite_result(context, nested_shape
+                        .sub_width(1)
+                        .max_width_error(nested_shape.width, value.span)?)?);
+                }
                 result.push_str(">");
             },
             Html::Close { tag } => {

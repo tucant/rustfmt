@@ -12,11 +12,11 @@ pub(crate) enum Html {
     Expr(P<Expr>),
     Comment(StrLit),
     Open {
-        tag: Ident
+        tag: Ident,
+        attrs: Vec<(Ident, P<Expr>)>
     },
     Close {
-        tag: Ident
-        
+        tag: Ident,
     }
 }
 
@@ -64,8 +64,6 @@ pub(crate) fn parse_html(
                     TokenKind::BinOp(BinOpToken::Slash) => {
                         parse_eat!(&TokenKind::BinOp(BinOpToken::Slash));
                         let id = parse_or!(parse_ident);
-                        // attrs
-
                         parse_eat!(&TokenKind::Gt);
                         result.push(Html::Close { tag: id });
                     }
@@ -83,10 +81,15 @@ pub(crate) fn parse_html(
                     }
                     _ => {
                         let id = parse_or!(parse_ident);
-                        // attrs
-
+                        let mut attrs = Vec::new();
+                        while parser.token.kind != TokenKind::Gt {
+                            let id = parse_or!(parse_ident);
+                            parse_eat!(&TokenKind::Eq);
+                            let expr = parse_or!(parse_expr);
+                            attrs.push((id, expr));
+                        }
                         parse_eat!(&TokenKind::Gt);
-                        result.push(Html::Open { tag: id });
+                        result.push(Html::Open { tag: id, attrs });
 
                     }
                 }
