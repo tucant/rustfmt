@@ -3,6 +3,7 @@ use rustc_ast::ptr::P;
 use rustc_ast::token::TokenKind;
 use rustc_ast::tokenstream::TokenStream;
 use rustc_span::symbol::{self, kw};
+use tracing::debug;
 
 use crate::rewrite::RewriteContext;
 
@@ -10,6 +11,8 @@ pub(crate) fn parse_html(
     context: &RewriteContext<'_>,
     ts: TokenStream,
 ) -> Option<Vec<(ast::Visibility, symbol::Ident, P<ast::Ty>, P<ast::Expr>)>> {
+    debug!("parsing");
+
     let mut result = vec![];
     let mut parser = super::build_parser(context, ts);
     macro_rules! parse_or {
@@ -32,6 +35,8 @@ pub(crate) fn parse_html(
         }
     }
     while parser.token.kind != TokenKind::Eof {
+        
+
         // Parse a `lazy_static!` item.
         // FIXME: These `eat_*` calls should be converted to `parse_or` to avoid
         // silently formatting malformed lazy-statics.

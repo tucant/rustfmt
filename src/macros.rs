@@ -171,6 +171,9 @@ pub(crate) fn rewrite_macro(
     shape: Shape,
     position: MacroPosition,
 ) -> RewriteResult {
+    debug!(
+        "rewrite_macro",
+    );
     let should_skip = context
         .skip_context
         .macros
@@ -214,9 +217,16 @@ fn rewrite_macro_inner(
     position: MacroPosition,
     is_nested_macro: bool,
 ) -> RewriteResult {
+    debug!(
+        "rewrite_macro_inner",
+    );
+    
     if context.config.use_try_shorthand() {
         if let Some(expr) = convert_try_mac(mac, context) {
             context.leave_macro();
+            debug!(
+                "early return",
+            );
             return expr.rewrite_result(context, shape);
         }
     }
@@ -234,6 +244,7 @@ fn rewrite_macro_inner(
 
     let ts = mac.args.tokens.clone();
     let has_comment = contains_comment(context.snippet(mac.span()));
+    debug!("ts {} has_comment {}", ts.is_empty(), has_comment);
     if ts.is_empty() && !has_comment {
         return match style {
             Delimiter::Parenthesis if position == MacroPosition::Item => {
@@ -260,7 +271,11 @@ fn rewrite_macro_inner(
             },
         }
     }
-    if macro_name == "html" {
+    println!("macro name {}", macro_name);
+    if macro_name == "html!" {
+        debug!(
+            "html macro",
+        );
         match format_html(context, shape, ts.clone(), mac.span()) {
             Ok(rw) => return Ok(rw),
             Err(err) => match err {
