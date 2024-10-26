@@ -20,7 +20,7 @@ use rustc_span::{
     BytePos, DUMMY_SP, Span, Symbol,
     symbol::{self, kw},
 };
-use tracing::debug;
+use tracing::{debug, info};
 
 use crate::comment::{
     CharClasses, FindUncommented, FullCodeCharKind, LineClasses, contains_comment,
@@ -171,9 +171,6 @@ pub(crate) fn rewrite_macro(
     shape: Shape,
     position: MacroPosition,
 ) -> RewriteResult {
-    debug!(
-        "rewrite_macro",
-    );
     let should_skip = context
         .skip_context
         .macros
@@ -217,16 +214,9 @@ fn rewrite_macro_inner(
     position: MacroPosition,
     is_nested_macro: bool,
 ) -> RewriteResult {
-    debug!(
-        "rewrite_macro_inner",
-    );
-    
     if context.config.use_try_shorthand() {
         if let Some(expr) = convert_try_mac(mac, context) {
             context.leave_macro();
-            debug!(
-                "early return",
-            );
             return expr.rewrite_result(context, shape);
         }
     }
@@ -244,7 +234,6 @@ fn rewrite_macro_inner(
 
     let ts = mac.args.tokens.clone();
     let has_comment = contains_comment(context.snippet(mac.span()));
-    debug!("ts {} has_comment {}", ts.is_empty(), has_comment);
     if ts.is_empty() && !has_comment {
         return match style {
             Delimiter::Parenthesis if position == MacroPosition::Item => {
@@ -271,11 +260,7 @@ fn rewrite_macro_inner(
             },
         }
     }
-    println!("macro name {}", macro_name);
     if macro_name == "html!" {
-        debug!(
-            "html macro",
-        );
         match format_html(context, shape, ts.clone(), mac.span()) {
             Ok(rw) => return Ok(rw),
             Err(err) => match err {
@@ -1506,6 +1491,8 @@ fn format_html(
 
     let parsed_elems =
         parse_html(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
+
+        /*
     let last = parsed_elems.len() - 1;
     for (i, (vis, id, ty, expr)) in parsed_elems.iter().enumerate() {
         // Rewrite as a static item.
@@ -1533,7 +1520,7 @@ fn format_html(
     }
 
     result.push_str(&shape.indent.to_string_with_newline(context.config));
-    result.push('}');
+    result.push('}');*/
 
     Ok(result)
 }
