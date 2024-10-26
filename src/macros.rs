@@ -30,7 +30,7 @@ use crate::config::lists::*;
 use crate::expr::{RhsAssignKind, rewrite_array, rewrite_assign_rhs};
 use crate::lists::{ListFormatting, itemize_list, write_list};
 use crate::overflow;
-use crate::parse::macros::html::parse_html;
+use crate::parse::macros::html::{parse_html, Html};
 use crate::parse::macros::lazy_static::parse_lazy_static;
 use crate::parse::macros::{ParsedMacroArgs, parse_expr, parse_macro_args};
 use crate::rewrite::{
@@ -1486,41 +1486,38 @@ fn format_html(
         .block_indent(context.config.tab_spaces())
         .with_max_width(context.config);
 
-    result.push_str("lazy_static! {");
+    result.push_str("html! {");
     result.push_str(&nested_shape.indent.to_string_with_newline(context.config));
 
     let parsed_elems =
         parse_html(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
 
-        /*
-    let last = parsed_elems.len() - 1;
-    for (i, (vis, id, ty, expr)) in parsed_elems.iter().enumerate() {
-        // Rewrite as a static item.
-        let vis = crate::utils::format_visibility(context, vis);
-        let mut stmt = String::with_capacity(128);
-        stmt.push_str(&format!(
-            "{}static ref {}: {} =",
-            vis,
-            id,
-            ty.rewrite_result(context, nested_shape)?
-        ));
-        result.push_str(&rewrite_assign_rhs(
-            context,
-            stmt,
-            &*expr,
-            &RhsAssignKind::Expr(&expr.kind, expr.span),
-            nested_shape
-                .sub_width(1)
-                .max_width_error(nested_shape.width, expr.span)?,
-        )?);
-        result.push(';');
-        if i != last {
-            result.push_str(&nested_shape.indent.to_string_with_newline(context.config));
+    for (i, html) in parsed_elems.iter().enumerate() {
+        match html {
+            Html::Expr(p) => {
+                
+            },
+            Html::Comment(str_lit) => {
+                result.push_str(&shape.indent.to_string_with_newline(context.config));
+                result.push_str("<!--\"");
+                result.push_str(str_lit.symbol.as_str());
+                result.push_str("\"-->")
+            },
+            Html::Open { tag } => {
+                result.push_str("<");
+                result.push_str(tag.as_str());
+                result.push_str(">");
+            },
+            Html::Close { tag } => {
+                result.push_str("</");
+                result.push_str(tag.as_str());
+                result.push_str(">");
+            },
         }
-    }
+    }       
 
     result.push_str(&shape.indent.to_string_with_newline(context.config));
-    result.push('}');*/
+    result.push('}');
 
     Ok(result)
 }
