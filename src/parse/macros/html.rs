@@ -90,7 +90,6 @@ pub(crate) fn parse_html(
                         }
                         parse_eat!(&TokenKind::Gt);
                         result.push(Html::Open { tag: id, attrs });
-
                     }
                 }
             }

@@ -20,7 +20,7 @@ use rustc_span::{
     BytePos, DUMMY_SP, Span, Symbol,
     symbol::{self, kw},
 };
-use tracing::{debug, info};
+use tracing::{debug, info, warn};
 
 use crate::comment::{
     CharClasses, FindUncommented, FullCodeCharKind, LineClasses, contains_comment,
@@ -263,14 +263,10 @@ fn rewrite_macro_inner(
     if macro_name == "html!" {
         match format_html(context, shape, ts.clone(), mac.span()) {
             Ok(rw) => return Ok(rw),
-            Err(err) => match err {
-                // We will move on to parsing macro args just like other macros
-                // if we could not parse lazy_static! with known syntax
-                RewriteError::MacroFailure { kind, span: _ }
-                    if kind == MacroErrorKind::ParseFailure => {}
-                // If formatting fails even though parsing succeeds, return the err early
-                _ => return Err(err),
-            },
+            Err(err) => {
+                warn!("{} {}", err,context.snippet(mac.span()));
+                return Err(err)
+            }
         }
     }
 
