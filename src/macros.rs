@@ -30,6 +30,7 @@ use crate::config::lists::*;
 use crate::expr::{RhsAssignKind, rewrite_array, rewrite_assign_rhs};
 use crate::lists::{ListFormatting, itemize_list, write_list};
 use crate::overflow;
+use crate::parse::macros::html::parse_html;
 use crate::parse::macros::lazy_static::parse_lazy_static;
 use crate::parse::macros::{ParsedMacroArgs, parse_expr, parse_macro_args};
 use crate::rewrite::{
@@ -248,6 +249,19 @@ fn rewrite_macro_inner(
     // Format well-known macros which cannot be parsed as a valid AST.
     if macro_name == "lazy_static!" && !has_comment {
         match format_lazy_static(context, shape, ts.clone(), mac.span()) {
+            Ok(rw) => return Ok(rw),
+            Err(err) => match err {
+                // We will move on to parsing macro args just like other macros
+                // if we could not parse lazy_static! with known syntax
+                RewriteError::MacroFailure { kind, span: _ }
+                    if kind == MacroErrorKind::ParseFailure => {}
+                // If formatting fails even though parsing succeeds, return the err early
+                _ => return Err(err),
+            },
+        }
+    }
+    if macro_name == "html" {
+        match format_html(context, shape, ts.clone(), mac.span()) {
             Ok(rw) => return Ok(rw),
             Err(err) => match err {
                 // We will move on to parsing macro args just like other macros
@@ -1429,6 +1443,54 @@ fn format_lazy_static(
 
     let parsed_elems =
         parse_lazy_static(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
+    let last = parsed_elems.len() - 1;
+    for (i, (vis, id, ty, expr)) in parsed_elems.iter().enumerate() {
+        // Rewrite as a static item.
+        let vis = crate::utils::format_visibility(context, vis);
+        let mut stmt = String::with_capacity(128);
+        stmt.push_str(&format!(
+            "{}static ref {}: {} =",
+            vis,
+            id,
+            ty.rewrite_result(context, nested_shape)?
+        ));
+        result.push_str(&rewrite_assign_rhs(
+            context,
+            stmt,
+            &*expr,
+            &RhsAssignKind::Expr(&expr.kind, expr.span),
+            nested_shape
+                .sub_width(1)
+                .max_width_error(nested_shape.width, expr.span)?,
+        )?);
+        result.push(';');
+        if i != last {
+            result.push_str(&nested_shape.indent.to_string_with_newline(context.config));
+        }
+    }
+
+    result.push_str(&shape.indent.to_string_with_newline(context.config));
+    result.push('}');
+
+    Ok(result)
+}
+
+fn format_html(
+    context: &RewriteContext<'_>,
+    shape: Shape,
+    ts: TokenStream,
+    span: Span,
+) -> RewriteResult {
+    let mut result = String::with_capacity(1024);
+    let nested_shape = shape
+        .block_indent(context.config.tab_spaces())
+        .with_max_width(context.config);
+
+    result.push_str("lazy_static! {");
+    result.push_str(&nested_shape.indent.to_string_with_newline(context.config));
+
+    let parsed_elems =
+        parse_html(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
     let last = parsed_elems.len() - 1;
     for (i, (vis, id, ty, expr)) in parsed_elems.iter().enumerate() {
         // Rewrite as a static item.
