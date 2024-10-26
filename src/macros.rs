@@ -1495,10 +1495,11 @@ fn format_html(
     for (i, html) in parsed_elems.iter().enumerate() {
         match html {
             Html::Expr(p) => {
-                
+                result.push_str(&p.rewrite_result(context, nested_shape
+                    .sub_width(1)
+                    .max_width_error(nested_shape.width, p.span)?)?);
             },
             Html::Comment(str_lit) => {
-                result.push_str(&shape.indent.to_string_with_newline(context.config));
                 result.push_str("<!--\"");
                 result.push_str(str_lit.symbol.as_str());
                 result.push_str("\"-->")
