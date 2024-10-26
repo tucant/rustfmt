@@ -32,6 +32,7 @@ pub(crate) fn parse_html(
                 Ok(val) => {
                     if parser.psess.dcx().has_errors().is_some() {
                         parser.psess.dcx().reset_err_count();
+                        panic!();
                         return None;
                     } else {
                         val
@@ -40,6 +41,7 @@ pub(crate) fn parse_html(
                 Err(err) => {
                     err.cancel();
                     parser.psess.dcx().reset_err_count();
+                    panic!("{} {}", file!(), line!());
                     return None;
                 }
             }
@@ -48,6 +50,7 @@ pub(crate) fn parse_html(
     macro_rules! parse_eat {
         ($($arg:expr),*) => {
             if !parser.eat($($arg,)*) {
+                panic!();
                 return None;
             }
         }
@@ -85,7 +88,7 @@ pub(crate) fn parse_html(
                         while parser.token.kind != TokenKind::Gt {
                             let id = parse_or!(parse_ident);
                             parse_eat!(&TokenKind::Eq);
-                            let expr = parse_or!(parse_expr);
+                            let expr = parse_or!(parse_expr); // here
                             attrs.push((id, expr));
                         }
                         parse_eat!(&TokenKind::Gt);
