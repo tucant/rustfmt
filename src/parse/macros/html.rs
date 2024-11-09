@@ -10,6 +10,7 @@ use crate::rewrite::RewriteContext;
 
 pub(crate) enum Html {
     Expr(P<Expr>),
+    Literal(StrLit),
     Comment(StrLit),
     Open {
         tag: Ident,
@@ -24,6 +25,7 @@ pub(crate) fn parse_html(
     context: &RewriteContext<'_>,
     ts: TokenStream,
 ) -> Option<Vec<Html>> {
+    eprintln!("parsing token stream {:?}", ts);
     let mut result = vec![];
     let mut parser = super::build_parser(context, ts);
     macro_rules! parse_or {
@@ -63,14 +65,16 @@ pub(crate) fn parse_html(
                         let Ok(literal) = parser.parse_str_lit() else {
                             return None;
                         };
+                        result.push(Html::Literal(literal))
                     }
                     _ => {
                         let expr = match parser.parse_expr() {
                             Ok(expr) => expr,
-                            _ => {
-                                warn!("{:?}", parser.parse_tokens());
+                            Err(error) => {
+                                panic!("{:?} {:?}", error, parser.parse_tokens());
                             }
                         };
+                        result.push(Html::Expr(expr))
                     }
                 }
             }

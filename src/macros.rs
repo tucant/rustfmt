@@ -1490,6 +1490,11 @@ fn format_html(
 
     for (i, html) in parsed_elems.iter().enumerate() {
         match html {
+            Html::Literal(literal) => {
+                result.push_str("\"");
+                result.push_str(literal.symbol.as_str());
+                result.push_str("\"");
+            }
             Html::Expr(p) => {
                 result.push_str(&p.rewrite_result(context, nested_shape
                     .sub_width(1)
