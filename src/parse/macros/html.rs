@@ -4,7 +4,7 @@ use rustc_ast::ptr::P;
 use rustc_ast::token::{BinOpToken, Lit, TokenKind};
 use rustc_ast::tokenstream::TokenStream;
 use rustc_span::symbol::{self, kw, Ident};
-use tracing::{debug, info};
+use tracing::{debug, info, warn};
 
 use crate::rewrite::RewriteContext;
 
@@ -32,7 +32,7 @@ pub(crate) fn parse_html(
                 Ok(val) => {
                     if parser.psess.dcx().has_errors().is_some() {
                         parser.psess.dcx().reset_err_count();
-                        panic!();
+                        panic!("{} {}", file!(), line!());
                         return None;
                     } else {
                         val
@@ -58,8 +58,21 @@ pub(crate) fn parse_html(
     while parser.token.kind != TokenKind::Eof {
         match parser.token.kind {
             TokenKind::OpenDelim(Delimiter::Brace) | TokenKind::Literal(_) | TokenKind::Ident(_, _) => {
-                let expr = parse_or!(parse_expr);
-                result.push(Html::Expr(expr));
+                match parser.token.kind {
+                    TokenKind::Literal(_) => {
+                        let Ok(literal) = parser.parse_str_lit() else {
+                            return None;
+                        };
+                    }
+                    _ => {
+                        let expr = match parser.parse_expr() {
+                            Ok(expr) => expr,
+                            _ => {
+                                warn!("{:?}", parser.parse_tokens());
+                            }
+                        };
+                    }
+                }
             }
             TokenKind::Lt => {
                 parse_eat!(&TokenKind::Lt);
@@ -88,8 +101,20 @@ pub(crate) fn parse_html(
                         while parser.token.kind != TokenKind::Gt {
                             let id = parse_or!(parse_ident);
                             parse_eat!(&TokenKind::Eq);
-                            let expr = parse_or!(parse_expr); // here
-                            attrs.push((id, expr));
+                            info!("{:?}", parser.token.kind);
+                            match parser.token.kind {
+                                TokenKind::Literal(_) => {
+                                    let Ok(literal) = parser.parse_str_lit() else {
+                                        return None;
+                                    };
+                                }
+                                _ => {
+                                    let Ok(expr) = parser.parse_expr() else {
+                                        panic!("{:?}", parser.parse_tokens());
+                                    };
+                                    attrs.push((id, expr));
+                                }
+                            }
                         }
                         parse_eat!(&TokenKind::Gt);
                         result.push(Html::Open { tag: id, attrs });
