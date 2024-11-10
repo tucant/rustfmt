@@ -22,7 +22,6 @@ this should be skipped
 }
 
 fn foo() {
-    // bruh. this breaks our macro
     let macro_result1 = html! { <div>
 this should be mangled</div>
             }

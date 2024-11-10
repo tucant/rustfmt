@@ -1482,7 +1482,7 @@ fn format_html(
         .block_indent(context.config.tab_spaces())
         .with_max_width(context.config);
 
-    result.push_str("html! {");
+    result.push_str("html_extractor::html! {");
     result.push_str(&nested_shape.indent.to_string_with_newline(context.config));
 
     let parsed_elems = parse_html(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
