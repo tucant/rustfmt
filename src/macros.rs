@@ -260,7 +260,7 @@ fn rewrite_macro_inner(
             },
         }
     }
-    if macro_name == "html!" {
+    if macro_name == "html_extractor::html!" {
         match format_html(context, shape, ts.clone(), mac.span()) {
             Ok(rw) => return Ok(rw),
             Err(err) => {

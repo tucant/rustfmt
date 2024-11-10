@@ -1,5 +1,5 @@
 pub fn main() {
-    html! {
+    html_extractor::html! {
         <h1>"test"</h1>
     }
 }

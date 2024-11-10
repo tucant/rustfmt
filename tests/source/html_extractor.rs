@@ -1,3 +1,3 @@
 pub fn main() {
-    html!(<h1>"test"</h1>)
+    html_extractor::html!(<h1>"test"</h1>)
 }
