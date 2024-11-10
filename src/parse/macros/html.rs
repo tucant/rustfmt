@@ -11,6 +11,7 @@ use crate::rewrite::RewriteContext;
 pub(crate) enum Html {
     Expr(P<Expr>),
     Literal(StrLit),
+    Ident(Ident),
     Comment(StrLit),
     Open {
         tag: Ident,
@@ -56,27 +57,26 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
     }
     while parser.token.kind != TokenKind::Eof {
         match parser.token.kind {
-            TokenKind::OpenDelim(Delimiter::Brace)
-            | TokenKind::Literal(_)
-            | TokenKind::Ident(_, _) => {
+            TokenKind::OpenDelim(Delimiter::Brace) => {
                 eprintln!("parsing inner expr");
-                match parser.token.kind {
-                    TokenKind::Literal(_) => {
-                        let Ok(literal) = parser.parse_str_lit() else {
-                            return None;
-                        };
-                        result.push(Html::Literal(literal))
+                let expr = match parser.parse_expr() {
+                    Ok(expr) => expr,
+                    Err(error) => {
+                        panic!("{:?} {:?}", error, parser.parse_tokens());
                     }
-                    _ => {
-                        let expr = match parser.parse_expr() {
-                            Ok(expr) => expr,
-                            Err(error) => {
-                                panic!("{:?} {:?}", error, parser.parse_tokens());
-                            }
-                        };
-                        result.push(Html::Expr(expr))
-                    }
-                }
+                };
+                result.push(Html::Expr(expr))
+            }
+            TokenKind::Literal(_) => {
+                let Ok(literal) = parser.parse_str_lit() else {
+                    return None;
+                };
+                result.push(Html::Literal(literal))
+            }
+            TokenKind::Ident(_, _) => {
+                eprintln!("parsing ident");
+                let id = parse_or!(parse_ident);
+                result.push(Html::Ident(id))
             }
             TokenKind::Lt => {
                 eprintln!("parsing lt");
