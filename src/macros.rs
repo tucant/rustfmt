@@ -30,7 +30,7 @@ use crate::config::lists::*;
 use crate::expr::{RhsAssignKind, rewrite_array, rewrite_assign_rhs};
 use crate::lists::{ListFormatting, itemize_list, write_list};
 use crate::overflow;
-use crate::parse::macros::html::{parse_html, Html};
+use crate::parse::macros::html::{Html, parse_html};
 use crate::parse::macros::lazy_static::parse_lazy_static;
 use crate::parse::macros::{ParsedMacroArgs, parse_expr, parse_macro_args};
 use crate::rewrite::{
@@ -264,8 +264,8 @@ fn rewrite_macro_inner(
         match format_html(context, shape, ts.clone(), mac.span()) {
             Ok(rw) => return Ok(rw),
             Err(err) => {
-                warn!("{} {}", err,context.snippet(mac.span()));
-                return Err(err)
+                warn!("{} {}", err, context.snippet(mac.span()));
+                return Err(err);
             }
         }
     }
@@ -1485,8 +1485,7 @@ fn format_html(
     result.push_str("html! {");
     result.push_str(&nested_shape.indent.to_string_with_newline(context.config));
 
-    let parsed_elems =
-        parse_html(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
+    let parsed_elems = parse_html(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
 
     for (i, html) in parsed_elems.iter().enumerate() {
         match html {
@@ -1496,34 +1495,44 @@ fn format_html(
                 result.push_str("\"");
             }
             Html::Expr(p) => {
-                result.push_str(&p.rewrite_result(context, nested_shape
-                    .sub_width(1)
-                    .max_width_error(nested_shape.width, p.span)?)?);
-            },
+                result.push_str(
+                    &p.rewrite_result(
+                        context,
+                        nested_shape
+                            .sub_width(1)
+                            .max_width_error(nested_shape.width, p.span)?,
+                    )?,
+                );
+            }
             Html::Comment(str_lit) => {
                 result.push_str("<!--\"");
                 result.push_str(str_lit.symbol.as_str());
                 result.push_str("\"-->")
-            },
+            }
             Html::Open { tag, attrs } => {
                 result.push_str("<");
                 result.push_str(tag.as_str());
                 for (name, value) in attrs {
                     result.push_str(" ");
                     result.push_str(name.as_str());
-                    result.push_str(&value.rewrite_result(context, nested_shape
-                        .sub_width(1)
-                        .max_width_error(nested_shape.width, value.span)?)?);
+                    result.push_str(
+                        &value.rewrite_result(
+                            context,
+                            nested_shape
+                                .sub_width(1)
+                                .max_width_error(nested_shape.width, value.span)?,
+                        )?,
+                    );
                 }
                 result.push_str(">");
-            },
+            }
             Html::Close { tag } => {
                 result.push_str("</");
                 result.push_str(tag.as_str());
                 result.push_str(">");
-            },
+            }
         }
-    }       
+    }
 
     result.push_str(&shape.indent.to_string_with_newline(context.config));
     result.push('}');

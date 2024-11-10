@@ -1,9 +1,9 @@
-use rustc_ast::{Expr, StrLit};
-use rustc_ast::{ast, token::Delimiter};
 use rustc_ast::ptr::P;
 use rustc_ast::token::{BinOpToken, Lit, TokenKind};
 use rustc_ast::tokenstream::TokenStream;
-use rustc_span::symbol::{self, kw, Ident};
+use rustc_ast::{Expr, StrLit};
+use rustc_ast::{ast, token::Delimiter};
+use rustc_span::symbol::{self, Ident, kw};
 use tracing::{debug, info, warn};
 
 use crate::rewrite::RewriteContext;
@@ -14,17 +14,14 @@ pub(crate) enum Html {
     Comment(StrLit),
     Open {
         tag: Ident,
-        attrs: Vec<(Ident, P<Expr>)>
+        attrs: Vec<(Ident, P<Expr>)>,
     },
     Close {
         tag: Ident,
-    }
+    },
 }
 
-pub(crate) fn parse_html(
-    context: &RewriteContext<'_>,
-    ts: TokenStream,
-) -> Option<Vec<Html>> {
+pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Option<Vec<Html>> {
     eprintln!("parsing token stream {:?}", ts);
     let mut result = vec![];
     let mut parser = super::build_parser(context, ts);
@@ -59,7 +56,9 @@ pub(crate) fn parse_html(
     }
     while parser.token.kind != TokenKind::Eof {
         match parser.token.kind {
-            TokenKind::OpenDelim(Delimiter::Brace) | TokenKind::Literal(_) | TokenKind::Ident(_, _) => {
+            TokenKind::OpenDelim(Delimiter::Brace)
+            | TokenKind::Literal(_)
+            | TokenKind::Ident(_, _) => {
                 eprintln!("parsing inner expr");
                 match parser.token.kind {
                     TokenKind::Literal(_) => {
@@ -94,7 +93,7 @@ pub(crate) fn parse_html(
                     }
                     TokenKind::Not => {
                         eprintln!("parsing not");
-                        parse_eat!(&TokenKind::Not );
+                        parse_eat!(&TokenKind::Not);
                         parse_eat!(&TokenKind::BinOp(BinOpToken::Minus));
                         parse_eat!(&TokenKind::BinOp(BinOpToken::Minus));
                         let Ok(comment) = parser.parse_str_lit() else {
@@ -136,7 +135,7 @@ pub(crate) fn parse_html(
                     }
                 }
             }
-            _ => return None
+            _ => return None,
         }
     }
 
