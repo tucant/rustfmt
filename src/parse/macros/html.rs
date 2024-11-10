@@ -60,6 +60,7 @@ pub(crate) fn parse_html(
     while parser.token.kind != TokenKind::Eof {
         match parser.token.kind {
             TokenKind::OpenDelim(Delimiter::Brace) | TokenKind::Literal(_) | TokenKind::Ident(_, _) => {
+                eprintln!("parsing inner expr");
                 match parser.token.kind {
                     TokenKind::Literal(_) => {
                         let Ok(literal) = parser.parse_str_lit() else {
@@ -79,15 +80,20 @@ pub(crate) fn parse_html(
                 }
             }
             TokenKind::Lt => {
+                eprintln!("parsing lt");
                 parse_eat!(&TokenKind::Lt);
                 match parser.token.kind {
                     TokenKind::BinOp(BinOpToken::Slash) => {
+                        eprintln!("parsing slash");
                         parse_eat!(&TokenKind::BinOp(BinOpToken::Slash));
+                        eprintln!("parsing ident");
                         let id = parse_or!(parse_ident);
+                        eprintln!("parsing gt");
                         parse_eat!(&TokenKind::Gt);
                         result.push(Html::Close { tag: id });
                     }
                     TokenKind::Not => {
+                        eprintln!("parsing not");
                         parse_eat!(&TokenKind::Not );
                         parse_eat!(&TokenKind::BinOp(BinOpToken::Minus));
                         parse_eat!(&TokenKind::BinOp(BinOpToken::Minus));
@@ -100,11 +106,15 @@ pub(crate) fn parse_html(
                         result.push(Html::Comment(comment));
                     }
                     _ => {
+                        eprintln!("parsing ident");
                         let id = parse_or!(parse_ident);
                         let mut attrs = Vec::new();
                         while parser.token.kind != TokenKind::Gt {
+                            eprintln!("parsing ident");
                             let id = parse_or!(parse_ident);
+                            eprintln!("parsing eq");
                             parse_eat!(&TokenKind::Eq);
+                            eprintln!("parsing literal or expr");
                             info!("{:?}", parser.token.kind);
                             match parser.token.kind {
                                 TokenKind::Literal(_) => {
@@ -120,6 +130,7 @@ pub(crate) fn parse_html(
                                 }
                             }
                         }
+                        eprintln!("parsing gt");
                         parse_eat!(&TokenKind::Gt);
                         result.push(Html::Open { tag: id, attrs });
                     }
