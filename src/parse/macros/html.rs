@@ -32,7 +32,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                 Ok(val) => {
                     if parser.psess.dcx().has_errors().is_some() {
                         parser.psess.dcx().reset_err_count();
-                        panic!("{} {}", file!(), line!());
+                        panic!("{:?} {} {}", parser.token, file!(), line!());
                         return None;
                     } else {
                         val
@@ -41,7 +41,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                 Err(err) => {
                     err.cancel();
                     parser.psess.dcx().reset_err_count();
-                    panic!("{} {}", file!(), line!());
+                    panic!("{:?} {} {}", parser.token, file!(), line!());
                     return None;
                 }
             }
@@ -56,7 +56,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
         }
     }
     while parser.token.kind != TokenKind::Eof {
-        match parser.token.kind {
+        match &parser.token.kind {
             TokenKind::OpenDelim(Delimiter::Brace) => {
                 eprintln!("parsing inner expr");
                 let expr = match parser.parse_expr() {
@@ -73,10 +73,12 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                 };
                 result.push(Html::Literal(literal))
             }
-            TokenKind::Ident(_, _) => {
-                eprintln!("parsing ident");
-                let id = parse_or!(parse_ident);
-                result.push(Html::Ident(id))
+            token_kind @ TokenKind::Ident(_, _) => {
+                //eprintln!("parsing ident {:?}", parser.token);
+                //let id = parse_or!(parse_ident);
+                let ident = parser.token.ident().unwrap().0;
+                parser.eat(&token_kind.clone());
+                result.push(Html::Ident(ident))
             }
             TokenKind::Lt => {
                 eprintln!("parsing lt");
@@ -100,8 +102,8 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                             return None;
                         };
                         parse_eat!(&TokenKind::BinOp(BinOpToken::Minus));
-                        parse_eat!(&TokenKind::BinOp(BinOpToken::Minus));
-                        parse_eat!(&TokenKind::Gt);
+                        println!("{:?}", parser.token);
+                        parse_eat!(&TokenKind::RArrow);
                         result.push(Html::Comment(comment));
                     }
                     _ => {
