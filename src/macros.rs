@@ -1518,6 +1518,7 @@ fn format_html(
                 for (name, value) in attrs {
                     result.push_str(" ");
                     result.push_str(name.as_str());
+                    result.push_str("=");
                     match &value {
                        HtmlAttributeValue::Expr(p) => result.push_str(
                             &p.rewrite_result(
@@ -1527,7 +1528,11 @@ fn format_html(
                                     .max_width_error(nested_shape.width, p.span)?,
                             )?,
                         ),
-                        HtmlAttributeValue::Literal(str_lit) => result.push_str(str_lit.symbol.as_str()),
+                        HtmlAttributeValue::Literal(str_lit) => {
+                            result.push_str("\"");
+                            result.push_str(str_lit.symbol.as_str());
+                            result.push_str("\"");
+                        },
                         HtmlAttributeValue::Ident(ident) =>  result.push_str(ident.as_str()),
                     }
                 }
