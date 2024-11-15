@@ -8,6 +8,12 @@ use tracing::{debug, info, warn};
 
 use crate::rewrite::RewriteContext;
 
+pub(crate) enum HtmlAttributeValue {
+    Expr(P<Expr>),
+    Literal(StrLit),
+    Ident(Ident),
+}
+
 pub(crate) enum Html {
     Expr(P<Expr>),
     Literal(StrLit),
@@ -15,7 +21,7 @@ pub(crate) enum Html {
     Comment(StrLit),
     Open {
         tag: Ident,
-        attrs: Vec<(Ident, P<Expr>)>,
+        attrs: Vec<(Ident, HtmlAttributeValue)>,
     },
     Close {
         tag: Ident,
@@ -117,7 +123,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                             parse_eat!(&TokenKind::Eq);
                             eprintln!("parsing literal or expr");
                             info!("{:?}", parser.token.kind);
-                            match parser.token.kind {
+                            match &parser.token.kind {
                                 TokenKind::OpenDelim(Delimiter::Brace) => {
                                     eprintln!("parsing inner expr");
                                     let expr = match parser.parse_expr() {
@@ -126,20 +132,20 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                                             panic!("{:?} {:?}", error, parser.parse_tokens());
                                         }
                                     };
-                                    attrs.push((id, Html::Expr(expr)));
+                                    attrs.push((id, HtmlAttributeValue::Expr(expr)));
                                 }
                                 TokenKind::Literal(_) => {
                                     let Ok(literal) = parser.parse_str_lit() else {
                                         return None;
                                     };
-                                    attrs.push((id, Html::Literal(literal)));
+                                    attrs.push((id, HtmlAttributeValue::Literal(literal)));
                                 }
                                 token_kind @ TokenKind::Ident(_, _) => {
                                     //eprintln!("parsing ident {:?}", parser.token);
                                     //let id = parse_or!(parse_ident);
                                     let ident = parser.token.ident().unwrap().0;
                                     parser.eat(&token_kind.clone());
-                                    attrs.push((id, Html::Ident(ident)))
+                                    attrs.push((id, HtmlAttributeValue::Ident(ident)))
                                 }
                                 _ => panic!()
                             }
