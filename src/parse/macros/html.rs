@@ -118,17 +118,30 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                             eprintln!("parsing literal or expr");
                             info!("{:?}", parser.token.kind);
                             match parser.token.kind {
+                                TokenKind::OpenDelim(Delimiter::Brace) => {
+                                    eprintln!("parsing inner expr");
+                                    let expr = match parser.parse_expr() {
+                                        Ok(expr) => expr,
+                                        Err(error) => {
+                                            panic!("{:?} {:?}", error, parser.parse_tokens());
+                                        }
+                                    };
+                                    attrs.push((id, Html::Expr(expr)));
+                                }
                                 TokenKind::Literal(_) => {
                                     let Ok(literal) = parser.parse_str_lit() else {
                                         return None;
                                     };
+                                    attrs.push((id, Html::Literal(literal)));
                                 }
-                                _ => {
-                                    let Ok(expr) = parser.parse_expr() else {
-                                        panic!("{:?}", parser.parse_tokens());
-                                    };
-                                    attrs.push((id, expr));
+                                token_kind @ TokenKind::Ident(_, _) => {
+                                    //eprintln!("parsing ident {:?}", parser.token);
+                                    //let id = parse_or!(parse_ident);
+                                    let ident = parser.token.ident().unwrap().0;
+                                    parser.eat(&token_kind.clone());
+                                    attrs.push((id, Html::Ident(ident)))
                                 }
+                                _ => panic!()
                             }
                         }
                         eprintln!("parsing gt");
