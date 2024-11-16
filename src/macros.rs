@@ -1498,6 +1498,7 @@ fn format_html(
                 result.push_str(ident.as_str());
             }
             Html::Expr(p) => {
+                result.push_str("{");
                 result.push_str(
                     &p.rewrite_result(
                         context,
@@ -1506,6 +1507,7 @@ fn format_html(
                             .max_width_error(nested_shape.width, p.span)?,
                     )?,
                 );
+                result.push_str("}");
             }
             Html::Comment(str_lit) => {
                 result.push_str("<!--\"");
@@ -1520,14 +1522,18 @@ fn format_html(
                     result.push_str(name.as_str());
                     result.push_str("=");
                     match &value {
-                       HtmlAttributeValue::Expr(p) => result.push_str(
+                       HtmlAttributeValue::Expr(p) => {
+                        result.push_str("{");
+                        result.push_str(
                             &p.rewrite_result(
                                 context,
                                 nested_shape
                                     .sub_width(1)
                                     .max_width_error(nested_shape.width, p.span)?,
                             )?,
-                        ),
+                        );
+                        result.push_str("}");
+                    },
                         HtmlAttributeValue::Literal(str_lit) => {
                             result.push_str("\"");
                             result.push_str(str_lit.symbol.as_str());

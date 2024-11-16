@@ -65,12 +65,14 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
         match &parser.token.kind {
             TokenKind::OpenDelim(Delimiter::Brace) => {
                 //eprintln!("parsing inner expr");
+                parser.eat(&TokenKind::OpenDelim(Delimiter::Brace));
                 let expr = match parser.parse_expr() {
                     Ok(expr) => expr,
                     Err(error) => {
                         panic!("{:?} {:?}", error, parser.parse_tokens());
                     }
                 };
+                parser.eat(&TokenKind::CloseDelim(Delimiter::Brace));
                 result.push(Html::Expr(expr))
             }
             TokenKind::Literal(_) => {
@@ -127,6 +129,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                             //eprintln!("parsing literal or expr");
                             match &parser.token.kind {
                                 TokenKind::OpenDelim(Delimiter::Brace) => {
+                                    parser.eat(&TokenKind::OpenDelim(Delimiter::Brace));
                                     //eprintln!("parsing inner expr");
                                     let expr = match parser.parse_expr() {
                                         Ok(expr) => expr,
@@ -134,6 +137,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                                             panic!("{:?} {:?}", error, parser.parse_tokens());
                                         }
                                     };
+                                    parser.eat(&TokenKind::CloseDelim(Delimiter::Brace));
                                     attrs.push((id, HtmlAttributeValue::Expr(expr)));
                                 }
                                 TokenKind::Literal(_) => {
