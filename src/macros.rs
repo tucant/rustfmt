@@ -12,6 +12,7 @@
 use std::collections::HashMap;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
+use itertools::Itertools;
 use rustc_ast::token::{BinOpToken, Delimiter, Token, TokenKind};
 use rustc_ast::tokenstream::{RefTokenTreeCursor, TokenStream, TokenTree};
 use rustc_ast::{ast, ptr};
@@ -1519,7 +1520,7 @@ fn format_html(
                 result.push_str(tag.as_str());
                 for (name, value) in attrs {
                     result.push_str(" ");
-                    result.push_str(name.as_str());
+                    result.push_str(&name.iter().map(|a| a.as_str()).join(":"));
                     result.push_str("=");
                     match &value {
                         HtmlAttributeValue::Expr(p) => {

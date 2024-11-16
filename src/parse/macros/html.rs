@@ -21,7 +21,7 @@ pub(crate) enum Html {
     Comment(StrLit),
     Open {
         tag: Ident,
-        attrs: Vec<(Ident, HtmlAttributeValue)>,
+        attrs: Vec<(Vec<Ident>, HtmlAttributeValue)>,
     },
     Close {
         tag: Ident,
@@ -111,7 +111,6 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                             return None;
                         };
                         parse_eat!(&TokenKind::BinOp(BinOpToken::Minus));
-                        println!("{:?}", parser.token);
                         parse_eat!(&TokenKind::RArrow);
                         result.push(Html::Comment(comment));
                     }
@@ -122,10 +121,17 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                         let mut attrs = Vec::new();
                         while parser.token.kind != TokenKind::Gt {
                             //eprintln!("parsing ident");
-                            let id = parser.token.ident().unwrap().0;
+                            let mut id = vec![parser.token.ident().unwrap().0];
                             parser.eat(&parser.token.kind.clone());
+                            // also minus?
+                            while parser.token.kind == TokenKind::Colon {
+                                parser.eat(&TokenKind::Colon);
+                                let i = parser.token.ident().unwrap().0;
+                                parser.eat(&parser.token.kind.clone());
+                                id.push(i);
+                            }
                             //eprintln!("parsing eq");
-                            parse_eat!(&TokenKind::Eq);
+                            parse_eat!(&TokenKind::Eq); // here
                             //eprintln!("parsing literal or expr");
                             match &parser.token.kind {
                                 TokenKind::OpenDelim(Delimiter::Brace) => {

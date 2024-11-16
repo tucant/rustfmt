@@ -1,0 +1,1011 @@
+thread 'main' panicked at src/parse/macros/html.rs:127:29:
+Token { kind: BinOp(Minus), span: Span { lo: BytePos(3653), hi: BytePos(3654), ctxt: #0 } } src/parse/macros/html.rs 127
+stack backtrace:
+   0:     0x7fe677471ea5 - std::backtrace::Backtrace::create::h848268079fe455dd
+   1:     0x7fe675c770a5 - std::backtrace::Backtrace::force_capture::heaa55bc344fe05e4
+   2:     0x7fe674d9af07 - std[227f26c2b9ed58b0]::panicking::update_hook::<alloc[6cb5b29cce310c23]::boxed::Box<rustc_driver_impl[7a2f35a4b9df6de5]::install_ice_hook::{closure#0}>>::{closure#0}
+   3:     0x7fe675c8e728 - std::panicking::rust_panic_with_hook::h0366964df41daaa9
+   4:     0x7fe675c8e4f7 - std::panicking::begin_panic_handler::{{closure}}::hf072695bd7a726ae
+   5:     0x7fe675c8bed9 - std::sys::backtrace::__rust_end_short_backtrace::h5042bcbd32698216
+   6:     0x7fe675c8e1c4 - rust_begin_unwind
+   7:     0x7fe672a95b13 - core::panicking::panic_fmt::hee7082776d62f18a
+   8:     0x5630d56a0cbf - rustfmt_nightly::parse::macros::html::parse_html::h08dd93a9110b683f
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/html.rs:59:17
+   9:     0x5630d55d0a07 - rustfmt_nightly::macros::format_html::hffee243e4e4b52dd
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:1488:24
+  10:     0x5630d55c5007 - rustfmt_nightly::macros::rewrite_macro_inner::h87dc40ac531e1958
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:264:15
+  11:     0x5630d54edad7 - rustfmt_nightly::macros::rewrite_macro::{{closure}}::hfa5c62d89d882464
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:183:13
+  12:     0x5630d55fe0f1 - core::ops::function::FnOnce::call_once::hc783580ceb988c80
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  13:     0x5630d54c226b - <core::panic::unwind_safe::AssertUnwindSafe<F> as core::ops::function::FnOnce<()>>::call_once::h56d6afb803237b4b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/panic/unwind_safe.rs:272:9
+  14:     0x5630d571c72a - std::panicking::try::do_call::h6e5f5050e1cbaa3b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:557:40
+  15:     0x5630d54d489b - __rust_try
+  16:     0x5630d54d4659 - std::panicking::try::hbdd267432e134372
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:520:19
+  17:     0x5630d54d4659 - std::panic::catch_unwind::hd8ab997d9ac00300
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panic.rs:345:14
+  18:     0x5630d55c2991 - rustfmt_nightly::macros::rewrite_macro::h64bb3b330827a00c
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:182:22
+  19:     0x5630d5554b07 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::{{closure}}::h5da3f176e64062e0
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:47
+  20:     0x5630d55551e9 - rustfmt_nightly::visitor::FmtVisitor::with_context::hd72e3a51bb4b90e1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:1003:22
+  21:     0x5630d544be39 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::h96d3e7ebc21dc637
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:23
+  22:     0x5630d5445c5b - rustfmt_nightly::visitor::FmtVisitor::visit_stmt::h1560a1e929ddd5ca
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:175:21
+  23:     0x5630d544df2a - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:886:13
+  24:     0x5630d544e15a - rustfmt_nightly::visitor::FmtVisitor::walk_block_stmts::h75d55297b1058d4f
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:917:9
+  25:     0x5630d5446763 - rustfmt_nightly::visitor::FmtVisitor::visit_block::h4c8f3f163ef1b561
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:232:9
+  26:     0x5630d5448eaa - rustfmt_nightly::visitor::FmtVisitor::visit_fn::heab5dac94ec117d1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:423:9
+  27:     0x5630d544a56c - rustfmt_nightly::visitor::FmtVisitor::visit_item::hf00702973275fcc7
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:549:25
+  28:     0x5630d54447f0 - rustfmt_nightly::reorder::<impl rustfmt_nightly::visitor::FmtVisitor>::visit_items_with_reordering::hc704a57aec842be9
+                               at /home/moritz/Documents/rustfmt/src/reorder.rs:346:17
+  29:     0x5630d544dd05 - rustfmt_nightly::visitor::FmtVisitor::walk_mod_items::hcda8a06e5ad2c4e4
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:870:9
+  30:     0x5630d544ebd9 - rustfmt_nightly::visitor::FmtVisitor::format_separate_mod::h9f981018a83b3a38
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:979:9
+  31:     0x5630d533b22e - rustfmt_nightly::formatting::FormatContext<T>::format_file::h7979d18a17ff1af7
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:222:9
+  32:     0x5630d533a29f - rustfmt_nightly::formatting::format_project::h15e804479d1fed36
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:159:9
+  33:     0x5630d533b993 - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::{{closure}}::hd19fc7d4a54dffca
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:49:33
+  34:     0x5630d5349db7 - scoped_tls::ScopedKey<T>::with::h132d49980d70620c
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:171:13
+  35:     0x5630d5351bf3 - rustc_span::create_session_if_not_set_then::{{closure}}::hce78d6c75b47a696
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:50
+  36:     0x5630d5349c3f - scoped_tls::ScopedKey<T>::set::h72029f61ef04985a
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:137:9
+  37:     0x5630d5351b4e - rustc_span::create_session_if_not_set_then::hd3879123736a2b0f
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:9
+  38:     0x5630d53478da - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::hd0afe46916f5624d
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:39:9
+  39:     0x5630d5347d48 - rustfmt_nightly::Session<T>::format::h65d1dfeea32211b6
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:466:9
+  40:     0x5630d535e8e4 - rustfmt::format_and_emit_report::h4ac549bc9c0d0681
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:393:11
+  41:     0x5630d535e8af - rustfmt::format::{{closure}}::he51d9681b286c116
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:365:21
+  42:     0x5630d534798b - rustfmt_nightly::Session<T>::override_config::hd5b2d9733196ecdf
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:474:22
+  43:     0x5630d53560ad - rustfmt::format::hd7f64980ece02b32
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:364:17
+  44:     0x5630d5353514 - rustfmt::execute::hb920db613517d230
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:268:14
+  45:     0x5630d5352641 - rustfmt::main::hdb0bdce762c3b85e
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:38:27
+  46:     0x5630d5341d6b - core::ops::function::FnOnce::call_once::h39790646c20f7903
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  47:     0x5630d533961e - std::sys::backtrace::__rust_begin_short_backtrace::hf228ebbd218c0741
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/sys/backtrace.rs:154:18
+  48:     0x5630d5339691 - std::rt::lang_start::{{closure}}::hbca1b3fb6b8ab666
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:164:18
+  49:     0x7fe67728e63a - std::rt::lang_start_internal::hba35b62fbfd58f7b
+  50:     0x5630d533966a - std::rt::lang_start::h2264cd61b460ff92
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:163:17
+  51:     0x5630d535aa3e - main
+  52:     0x7fe67152527e - __libc_start_call_main
+  53:     0x7fe671525339 - __libc_start_main_alias_2
+  54:     0x5630d5338cf5 - _start
+  55:                0x0 - <unknown>
+
+
+rustc version: 1.83.0-nightly (c2f74c3f9 2024-09-09)
+platform: x86_64-unknown-linux-gnuthread 'main' panicked at src/parse/macros/html.rs:127:29:
+Token { kind: BinOp(Minus), span: Span { lo: BytePos(4901), hi: BytePos(4902), ctxt: #0 } } src/parse/macros/html.rs 127
+stack backtrace:
+   0:     0x7fe677471ea5 - std::backtrace::Backtrace::create::h848268079fe455dd
+   1:     0x7fe675c770a5 - std::backtrace::Backtrace::force_capture::heaa55bc344fe05e4
+   2:     0x7fe674d9af07 - std[227f26c2b9ed58b0]::panicking::update_hook::<alloc[6cb5b29cce310c23]::boxed::Box<rustc_driver_impl[7a2f35a4b9df6de5]::install_ice_hook::{closure#0}>>::{closure#0}
+   3:     0x7fe675c8e728 - std::panicking::rust_panic_with_hook::h0366964df41daaa9
+   4:     0x7fe675c8e4f7 - std::panicking::begin_panic_handler::{{closure}}::hf072695bd7a726ae
+   5:     0x7fe675c8bed9 - std::sys::backtrace::__rust_end_short_backtrace::h5042bcbd32698216
+   6:     0x7fe675c8e1c4 - rust_begin_unwind
+   7:     0x7fe672a95b13 - core::panicking::panic_fmt::hee7082776d62f18a
+   8:     0x5630d56a0cbf - rustfmt_nightly::parse::macros::html::parse_html::h08dd93a9110b683f
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/html.rs:59:17
+   9:     0x5630d55d0a07 - rustfmt_nightly::macros::format_html::hffee243e4e4b52dd
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:1488:24
+  10:     0x5630d55c5007 - rustfmt_nightly::macros::rewrite_macro_inner::h87dc40ac531e1958
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:264:15
+  11:     0x5630d54edad7 - rustfmt_nightly::macros::rewrite_macro::{{closure}}::hfa5c62d89d882464
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:183:13
+  12:     0x5630d55fe0f1 - core::ops::function::FnOnce::call_once::hc783580ceb988c80
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  13:     0x5630d54c226b - <core::panic::unwind_safe::AssertUnwindSafe<F> as core::ops::function::FnOnce<()>>::call_once::h56d6afb803237b4b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/panic/unwind_safe.rs:272:9
+  14:     0x5630d571c72a - std::panicking::try::do_call::h6e5f5050e1cbaa3b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:557:40
+  15:     0x5630d54d489b - __rust_try
+  16:     0x5630d54d4659 - std::panicking::try::hbdd267432e134372
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:520:19
+  17:     0x5630d54d4659 - std::panic::catch_unwind::hd8ab997d9ac00300
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panic.rs:345:14
+  18:     0x5630d55c2991 - rustfmt_nightly::macros::rewrite_macro::h64bb3b330827a00c
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:182:22
+  19:     0x5630d5554b07 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::{{closure}}::h5da3f176e64062e0
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:47
+  20:     0x5630d55551e9 - rustfmt_nightly::visitor::FmtVisitor::with_context::hd72e3a51bb4b90e1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:1003:22
+  21:     0x5630d544be39 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::h96d3e7ebc21dc637
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:23
+  22:     0x5630d5445c5b - rustfmt_nightly::visitor::FmtVisitor::visit_stmt::h1560a1e929ddd5ca
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:175:21
+  23:     0x5630d544df2a - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:886:13
+  24:     0x5630d544e15a - rustfmt_nightly::visitor::FmtVisitor::walk_block_stmts::h75d55297b1058d4f
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:917:9
+  25:     0x5630d5446763 - rustfmt_nightly::visitor::FmtVisitor::visit_block::h4c8f3f163ef1b561
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:232:9
+  26:     0x5630d5448eaa - rustfmt_nightly::visitor::FmtVisitor::visit_fn::heab5dac94ec117d1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:423:9
+  27:     0x5630d544a56c - rustfmt_nightly::visitor::FmtVisitor::visit_item::hf00702973275fcc7
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:549:25
+  28:     0x5630d54447f0 - rustfmt_nightly::reorder::<impl rustfmt_nightly::visitor::FmtVisitor>::visit_items_with_reordering::hc704a57aec842be9
+                               at /home/moritz/Documents/rustfmt/src/reorder.rs:346:17
+  29:     0x5630d544dd05 - rustfmt_nightly::visitor::FmtVisitor::walk_mod_items::hcda8a06e5ad2c4e4
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:870:9
+  30:     0x5630d544ebd9 - rustfmt_nightly::visitor::FmtVisitor::format_separate_mod::h9f981018a83b3a38
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:979:9
+  31:     0x5630d533b22e - rustfmt_nightly::formatting::FormatContext<T>::format_file::h7979d18a17ff1af7
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:222:9
+  32:     0x5630d533a29f - rustfmt_nightly::formatting::format_project::h15e804479d1fed36
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:159:9
+  33:     0x5630d533b993 - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::{{closure}}::hd19fc7d4a54dffca
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:49:33
+  34:     0x5630d5349db7 - scoped_tls::ScopedKey<T>::with::h132d49980d70620c
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:171:13
+  35:     0x5630d5351bf3 - rustc_span::create_session_if_not_set_then::{{closure}}::hce78d6c75b47a696
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:50
+  36:     0x5630d5349c3f - scoped_tls::ScopedKey<T>::set::h72029f61ef04985a
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:137:9
+  37:     0x5630d5351b4e - rustc_span::create_session_if_not_set_then::hd3879123736a2b0f
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:9
+  38:     0x5630d53478da - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::hd0afe46916f5624d
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:39:9
+  39:     0x5630d5347d48 - rustfmt_nightly::Session<T>::format::h65d1dfeea32211b6
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:466:9
+  40:     0x5630d535e8e4 - rustfmt::format_and_emit_report::h4ac549bc9c0d0681
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:393:11
+  41:     0x5630d535e8af - rustfmt::format::{{closure}}::he51d9681b286c116
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:365:21
+  42:     0x5630d534798b - rustfmt_nightly::Session<T>::override_config::hd5b2d9733196ecdf
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:474:22
+  43:     0x5630d53560ad - rustfmt::format::hd7f64980ece02b32
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:364:17
+  44:     0x5630d5353514 - rustfmt::execute::hb920db613517d230
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:268:14
+  45:     0x5630d5352641 - rustfmt::main::hdb0bdce762c3b85e
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:38:27
+  46:     0x5630d5341d6b - core::ops::function::FnOnce::call_once::h39790646c20f7903
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  47:     0x5630d533961e - std::sys::backtrace::__rust_begin_short_backtrace::hf228ebbd218c0741
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/sys/backtrace.rs:154:18
+  48:     0x5630d5339691 - std::rt::lang_start::{{closure}}::hbca1b3fb6b8ab666
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:164:18
+  49:     0x7fe67728e63a - std::rt::lang_start_internal::hba35b62fbfd58f7b
+  50:     0x5630d533966a - std::rt::lang_start::h2264cd61b460ff92
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:163:17
+  51:     0x5630d535aa3e - main
+  52:     0x7fe67152527e - __libc_start_call_main
+  53:     0x7fe671525339 - __libc_start_main_alias_2
+  54:     0x5630d5338cf5 - _start
+  55:                0x0 - <unknown>
+thread 'main' panicked at src/parse/macros/html.rs:127:29:
+Token { kind: Colon, span: Span { lo: BytePos(28134), hi: BytePos(28135), ctxt: #0 } } src/parse/macros/html.rs 127
+stack backtrace:
+   0:     0x7fe677471ea5 - std::backtrace::Backtrace::create::h848268079fe455dd
+   1:     0x7fe675c770a5 - std::backtrace::Backtrace::force_capture::heaa55bc344fe05e4
+   2:     0x7fe674d9af07 - std[227f26c2b9ed58b0]::panicking::update_hook::<alloc[6cb5b29cce310c23]::boxed::Box<rustc_driver_impl[7a2f35a4b9df6de5]::install_ice_hook::{closure#0}>>::{closure#0}
+   3:     0x7fe675c8e728 - std::panicking::rust_panic_with_hook::h0366964df41daaa9
+   4:     0x7fe675c8e4f7 - std::panicking::begin_panic_handler::{{closure}}::hf072695bd7a726ae
+   5:     0x7fe675c8bed9 - std::sys::backtrace::__rust_end_short_backtrace::h5042bcbd32698216
+   6:     0x7fe675c8e1c4 - rust_begin_unwind
+   7:     0x7fe672a95b13 - core::panicking::panic_fmt::hee7082776d62f18a
+   8:     0x5630d56a0cbf - rustfmt_nightly::parse::macros::html::parse_html::h08dd93a9110b683f
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/html.rs:59:17
+   9:     0x5630d55d0a07 - rustfmt_nightly::macros::format_html::hffee243e4e4b52dd
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:1488:24
+  10:     0x5630d55c5007 - rustfmt_nightly::macros::rewrite_macro_inner::h87dc40ac531e1958
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:264:15
+  11:     0x5630d54edad7 - rustfmt_nightly::macros::rewrite_macro::{{closure}}::hfa5c62d89d882464
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:183:13
+  12:     0x5630d55fe0f1 - core::ops::function::FnOnce::call_once::hc783580ceb988c80
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  13:     0x5630d54c226b - <core::panic::unwind_safe::AssertUnwindSafe<F> as core::ops::function::FnOnce<()>>::call_once::h56d6afb803237b4b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/panic/unwind_safe.rs:272:9
+  14:     0x5630d571c72a - std::panicking::try::do_call::h6e5f5050e1cbaa3b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:557:40
+  15:     0x5630d54d489b - __rust_try
+  16:     0x5630d54d4659 - std::panicking::try::hbdd267432e134372
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:520:19
+  17:     0x5630d54d4659 - std::panic::catch_unwind::hd8ab997d9ac00300
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panic.rs:345:14
+  18:     0x5630d55c2991 - rustfmt_nightly::macros::rewrite_macro::h64bb3b330827a00c
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:182:22
+  19:     0x5630d5554b07 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::{{closure}}::h5da3f176e64062e0
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:47
+  20:     0x5630d55551e9 - rustfmt_nightly::visitor::FmtVisitor::with_context::hd72e3a51bb4b90e1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:1003:22
+  21:     0x5630d544be39 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::h96d3e7ebc21dc637
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:23
+  22:     0x5630d5445c5b - rustfmt_nightly::visitor::FmtVisitor::visit_stmt::h1560a1e929ddd5ca
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:175:21
+  23:     0x5630d544df2a - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:886:13
+  24:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  25:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  26:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  27:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  28:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  29:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  30:     0x5630d544e15a - rustfmt_nightly::visitor::FmtVisitor::walk_block_stmts::h75d55297b1058d4f
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:917:9
+  31:     0x5630d5446763 - rustfmt_nightly::visitor::FmtVisitor::visit_block::h4c8f3f163ef1b561
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:232:9
+  32:     0x5630d5448eaa - rustfmt_nightly::visitor::FmtVisitor::visit_fn::heab5dac94ec117d1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:423:9
+  33:     0x5630d544a56c - rustfmt_nightly::visitor::FmtVisitor::visit_item::hf00702973275fcc7
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:549:25
+  34:     0x5630d54447f0 - rustfmt_nightly::reorder::<impl rustfmt_nightly::visitor::FmtVisitor>::visit_items_with_reordering::hc704a57aec842be9
+                               at /home/moritz/Documents/rustfmt/src/reorder.rs:346:17
+  35:     0x5630d544dd05 - rustfmt_nightly::visitor::FmtVisitor::walk_mod_items::hcda8a06e5ad2c4e4
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:870:9
+  36:     0x5630d544ebd9 - rustfmt_nightly::visitor::FmtVisitor::format_separate_mod::h9f981018a83b3a38
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:979:9
+  37:     0x5630d533b22e - rustfmt_nightly::formatting::FormatContext<T>::format_file::h7979d18a17ff1af7
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:222:9
+  38:     0x5630d533a29f - rustfmt_nightly::formatting::format_project::h15e804479d1fed36
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:159:9
+  39:     0x5630d533b993 - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::{{closure}}::hd19fc7d4a54dffca
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:49:33
+  40:     0x5630d5349db7 - scoped_tls::ScopedKey<T>::with::h132d49980d70620c
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:171:13
+  41:     0x5630d5351bf3 - rustc_span::create_session_if_not_set_then::{{closure}}::hce78d6c75b47a696
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:50
+  42:     0x5630d5349c3f - scoped_tls::ScopedKey<T>::set::h72029f61ef04985a
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:137:9
+  43:     0x5630d5351b4e - rustc_span::create_session_if_not_set_then::hd3879123736a2b0f
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:9
+  44:     0x5630d53478da - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::hd0afe46916f5624d
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:39:9
+  45:     0x5630d5347d48 - rustfmt_nightly::Session<T>::format::h65d1dfeea32211b6
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:466:9
+  46:     0x5630d535e8e4 - rustfmt::format_and_emit_report::h4ac549bc9c0d0681
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:393:11
+  47:     0x5630d535e8af - rustfmt::format::{{closure}}::he51d9681b286c116
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:365:21
+  48:     0x5630d534798b - rustfmt_nightly::Session<T>::override_config::hd5b2d9733196ecdf
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:474:22
+  49:     0x5630d53560ad - rustfmt::format::hd7f64980ece02b32
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:364:17
+  50:     0x5630d5353514 - rustfmt::execute::hb920db613517d230
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:268:14
+  51:     0x5630d5352641 - rustfmt::main::hdb0bdce762c3b85e
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:38:27
+  52:     0x5630d5341d6b - core::ops::function::FnOnce::call_once::h39790646c20f7903
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  53:     0x5630d533961e - std::sys::backtrace::__rust_begin_short_backtrace::hf228ebbd218c0741
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/sys/backtrace.rs:154:18
+  54:     0x5630d5339691 - std::rt::lang_start::{{closure}}::hbca1b3fb6b8ab666
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:164:18
+  55:     0x7fe67728e63a - std::rt::lang_start_internal::hba35b62fbfd58f7b
+  56:     0x5630d533966a - std::rt::lang_start::h2264cd61b460ff92
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:163:17
+  57:     0x5630d535aa3e - main
+  58:     0x7fe67152527e - __libc_start_call_main
+  59:     0x7fe671525339 - __libc_start_main_alias_2
+  60:     0x5630d5338cf5 - _start
+  61:                0x0 - <unknown>
+thread 'main' panicked at src/parse/macros/html.rs:127:29:
+Token { kind: Colon, span: Span { lo: BytePos(33380), hi: BytePos(33381), ctxt: #0 } } src/parse/macros/html.rs 127
+stack backtrace:
+   0:     0x7fe677471ea5 - std::backtrace::Backtrace::create::h848268079fe455dd
+   1:     0x7fe675c770a5 - std::backtrace::Backtrace::force_capture::heaa55bc344fe05e4
+   2:     0x7fe674d9af07 - std[227f26c2b9ed58b0]::panicking::update_hook::<alloc[6cb5b29cce310c23]::boxed::Box<rustc_driver_impl[7a2f35a4b9df6de5]::install_ice_hook::{closure#0}>>::{closure#0}
+   3:     0x7fe675c8e728 - std::panicking::rust_panic_with_hook::h0366964df41daaa9
+   4:     0x7fe675c8e4f7 - std::panicking::begin_panic_handler::{{closure}}::hf072695bd7a726ae
+   5:     0x7fe675c8bed9 - std::sys::backtrace::__rust_end_short_backtrace::h5042bcbd32698216
+   6:     0x7fe675c8e1c4 - rust_begin_unwind
+   7:     0x7fe672a95b13 - core::panicking::panic_fmt::hee7082776d62f18a
+   8:     0x5630d56a0cbf - rustfmt_nightly::parse::macros::html::parse_html::h08dd93a9110b683f
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/html.rs:59:17
+   9:     0x5630d55d0a07 - rustfmt_nightly::macros::format_html::hffee243e4e4b52dd
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:1488:24
+  10:     0x5630d55c5007 - rustfmt_nightly::macros::rewrite_macro_inner::h87dc40ac531e1958
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:264:15
+  11:     0x5630d54edad7 - rustfmt_nightly::macros::rewrite_macro::{{closure}}::hfa5c62d89d882464
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:183:13
+  12:     0x5630d55fe0f1 - core::ops::function::FnOnce::call_once::hc783580ceb988c80
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  13:     0x5630d54c226b - <core::panic::unwind_safe::AssertUnwindSafe<F> as core::ops::function::FnOnce<()>>::call_once::h56d6afb803237b4b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/panic/unwind_safe.rs:272:9
+  14:     0x5630d571c72a - std::panicking::try::do_call::h6e5f5050e1cbaa3b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:557:40
+  15:     0x5630d54d489b - __rust_try
+  16:     0x5630d54d4659 - std::panicking::try::hbdd267432e134372
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:520:19
+  17:     0x5630d54d4659 - std::panic::catch_unwind::hd8ab997d9ac00300
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panic.rs:345:14
+  18:     0x5630d55c2991 - rustfmt_nightly::macros::rewrite_macro::h64bb3b330827a00c
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:182:22
+  19:     0x5630d5554b07 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::{{closure}}::h5da3f176e64062e0
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:47
+  20:     0x5630d55551e9 - rustfmt_nightly::visitor::FmtVisitor::with_context::hd72e3a51bb4b90e1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:1003:22
+  21:     0x5630d544be39 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::h96d3e7ebc21dc637
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:23
+  22:     0x5630d5445c5b - rustfmt_nightly::visitor::FmtVisitor::visit_stmt::h1560a1e929ddd5ca
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:175:21
+  23:     0x5630d544df2a - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:886:13
+  24:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  25:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  26:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  27:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  28:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  29:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  30:     0x5630d544e15a - rustfmt_nightly::visitor::FmtVisitor::walk_block_stmts::h75d55297b1058d4f
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:917:9
+  31:     0x5630d5446763 - rustfmt_nightly::visitor::FmtVisitor::visit_block::h4c8f3f163ef1b561
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:232:9
+  32:     0x5630d5448eaa - rustfmt_nightly::visitor::FmtVisitor::visit_fn::heab5dac94ec117d1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:423:9
+  33:     0x5630d544a56c - rustfmt_nightly::visitor::FmtVisitor::visit_item::hf00702973275fcc7
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:549:25
+  34:     0x5630d54447f0 - rustfmt_nightly::reorder::<impl rustfmt_nightly::visitor::FmtVisitor>::visit_items_with_reordering::hc704a57aec842be9
+                               at /home/moritz/Documents/rustfmt/src/reorder.rs:346:17
+  35:     0x5630d544dd05 - rustfmt_nightly::visitor::FmtVisitor::walk_mod_items::hcda8a06e5ad2c4e4
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:870:9
+  36:     0x5630d544ebd9 - rustfmt_nightly::visitor::FmtVisitor::format_separate_mod::h9f981018a83b3a38
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:979:9
+  37:     0x5630d533b22e - rustfmt_nightly::formatting::FormatContext<T>::format_file::h7979d18a17ff1af7
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:222:9
+  38:     0x5630d533a29f - rustfmt_nightly::formatting::format_project::h15e804479d1fed36
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:159:9
+  39:     0x5630d533b993 - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::{{closure}}::hd19fc7d4a54dffca
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:49:33
+  40:     0x5630d5349db7 - scoped_tls::ScopedKey<T>::with::h132d49980d70620c
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:171:13
+  41:     0x5630d5351bf3 - rustc_span::create_session_if_not_set_then::{{closure}}::hce78d6c75b47a696
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:50
+  42:     0x5630d5349c3f - scoped_tls::ScopedKey<T>::set::h72029f61ef04985a
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:137:9
+  43:     0x5630d5351b4e - rustc_span::create_session_if_not_set_then::hd3879123736a2b0f
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:9
+  44:     0x5630d53478da - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::hd0afe46916f5624d
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:39:9
+  45:     0x5630d5347d48 - rustfmt_nightly::Session<T>::format::h65d1dfeea32211b6
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:466:9
+  46:     0x5630d535e8e4 - rustfmt::format_and_emit_report::h4ac549bc9c0d0681
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:393:11
+  47:     0x5630d535e8af - rustfmt::format::{{closure}}::he51d9681b286c116
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:365:21
+  48:     0x5630d534798b - rustfmt_nightly::Session<T>::override_config::hd5b2d9733196ecdf
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:474:22
+  49:     0x5630d53560ad - rustfmt::format::hd7f64980ece02b32
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:364:17
+  50:     0x5630d5353514 - rustfmt::execute::hb920db613517d230
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:268:14
+  51:     0x5630d5352641 - rustfmt::main::hdb0bdce762c3b85e
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:38:27
+  52:     0x5630d5341d6b - core::ops::function::FnOnce::call_once::h39790646c20f7903
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  53:     0x5630d533961e - std::sys::backtrace::__rust_begin_short_backtrace::hf228ebbd218c0741
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/sys/backtrace.rs:154:18
+  54:     0x5630d5339691 - std::rt::lang_start::{{closure}}::hbca1b3fb6b8ab666
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:164:18
+  55:     0x7fe67728e63a - std::rt::lang_start_internal::hba35b62fbfd58f7b
+  56:     0x5630d533966a - std::rt::lang_start::h2264cd61b460ff92
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:163:17
+  57:     0x5630d535aa3e - main
+  58:     0x7fe67152527e - __libc_start_call_main
+  59:     0x7fe671525339 - __libc_start_main_alias_2
+  60:     0x5630d5338cf5 - _start
+  61:                0x0 - <unknown>
+thread 'main' panicked at src/parse/macros/html.rs:127:29:
+Token { kind: BinOp(Minus), span: Span { lo: BytePos(39665), hi: BytePos(39666), ctxt: #0 } } src/parse/macros/html.rs 127
+stack backtrace:
+   0:     0x7fe677471ea5 - std::backtrace::Backtrace::create::h848268079fe455dd
+   1:     0x7fe675c770a5 - std::backtrace::Backtrace::force_capture::heaa55bc344fe05e4
+   2:     0x7fe674d9af07 - std[227f26c2b9ed58b0]::panicking::update_hook::<alloc[6cb5b29cce310c23]::boxed::Box<rustc_driver_impl[7a2f35a4b9df6de5]::install_ice_hook::{closure#0}>>::{closure#0}
+   3:     0x7fe675c8e728 - std::panicking::rust_panic_with_hook::h0366964df41daaa9
+   4:     0x7fe675c8e4f7 - std::panicking::begin_panic_handler::{{closure}}::hf072695bd7a726ae
+   5:     0x7fe675c8bed9 - std::sys::backtrace::__rust_end_short_backtrace::h5042bcbd32698216
+   6:     0x7fe675c8e1c4 - rust_begin_unwind
+   7:     0x7fe672a95b13 - core::panicking::panic_fmt::hee7082776d62f18a
+   8:     0x5630d56a0cbf - rustfmt_nightly::parse::macros::html::parse_html::h08dd93a9110b683f
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/html.rs:59:17
+   9:     0x5630d55d0a07 - rustfmt_nightly::macros::format_html::hffee243e4e4b52dd
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:1488:24
+  10:     0x5630d55c5007 - rustfmt_nightly::macros::rewrite_macro_inner::h87dc40ac531e1958
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:264:15
+  11:     0x5630d54edad7 - rustfmt_nightly::macros::rewrite_macro::{{closure}}::hfa5c62d89d882464
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:183:13
+  12:     0x5630d55fe0f1 - core::ops::function::FnOnce::call_once::hc783580ceb988c80
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  13:     0x5630d54c226b - <core::panic::unwind_safe::AssertUnwindSafe<F> as core::ops::function::FnOnce<()>>::call_once::h56d6afb803237b4b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/panic/unwind_safe.rs:272:9
+  14:     0x5630d571c72a - std::panicking::try::do_call::h6e5f5050e1cbaa3b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:557:40
+  15:     0x5630d54d489b - __rust_try
+  16:     0x5630d54d4659 - std::panicking::try::hbdd267432e134372
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:520:19
+  17:     0x5630d54d4659 - std::panic::catch_unwind::hd8ab997d9ac00300
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panic.rs:345:14
+  18:     0x5630d55c2991 - rustfmt_nightly::macros::rewrite_macro::h64bb3b330827a00c
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:182:22
+  19:     0x5630d5554b07 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::{{closure}}::h5da3f176e64062e0
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:47
+  20:     0x5630d55551e9 - rustfmt_nightly::visitor::FmtVisitor::with_context::hd72e3a51bb4b90e1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:1003:22
+  21:     0x5630d544be39 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::h96d3e7ebc21dc637
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:23
+  22:     0x5630d5445c5b - rustfmt_nightly::visitor::FmtVisitor::visit_stmt::h1560a1e929ddd5ca
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:175:21
+  23:     0x5630d544df2a - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:886:13
+  24:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  25:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  26:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  27:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  28:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  29:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  30:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  31:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  32:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  33:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  34:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  35:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  36:     0x5630d544e15a - rustfmt_nightly::visitor::FmtVisitor::walk_block_stmts::h75d55297b1058d4f
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:917:9
+  37:     0x5630d5446763 - rustfmt_nightly::visitor::FmtVisitor::visit_block::h4c8f3f163ef1b561
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:232:9
+  38:     0x5630d5448eaa - rustfmt_nightly::visitor::FmtVisitor::visit_fn::heab5dac94ec117d1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:423:9
+  39:     0x5630d544a56c - rustfmt_nightly::visitor::FmtVisitor::visit_item::hf00702973275fcc7
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:549:25
+  40:     0x5630d54447f0 - rustfmt_nightly::reorder::<impl rustfmt_nightly::visitor::FmtVisitor>::visit_items_with_reordering::hc704a57aec842be9
+                               at /home/moritz/Documents/rustfmt/src/reorder.rs:346:17
+  41:     0x5630d544dd05 - rustfmt_nightly::visitor::FmtVisitor::walk_mod_items::hcda8a06e5ad2c4e4
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:870:9
+  42:     0x5630d544ebd9 - rustfmt_nightly::visitor::FmtVisitor::format_separate_mod::h9f981018a83b3a38
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:979:9
+  43:     0x5630d533b22e - rustfmt_nightly::formatting::FormatContext<T>::format_file::h7979d18a17ff1af7
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:222:9
+  44:     0x5630d533a29f - rustfmt_nightly::formatting::format_project::h15e804479d1fed36
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:159:9
+  45:     0x5630d533b993 - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::{{closure}}::hd19fc7d4a54dffca
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:49:33
+  46:     0x5630d5349db7 - scoped_tls::ScopedKey<T>::with::h132d49980d70620c
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:171:13
+  47:     0x5630d5351bf3 - rustc_span::create_session_if_not_set_then::{{closure}}::hce78d6c75b47a696
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:50
+  48:     0x5630d5349c3f - scoped_tls::ScopedKey<T>::set::h72029f61ef04985a
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:137:9
+  49:     0x5630d5351b4e - rustc_span::create_session_if_not_set_then::hd3879123736a2b0f
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:9
+  50:     0x5630d53478da - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::hd0afe46916f5624d
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:39:9
+  51:     0x5630d5347d48 - rustfmt_nightly::Session<T>::format::h65d1dfeea32211b6
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:466:9
+  52:     0x5630d535e8e4 - rustfmt::format_and_emit_report::h4ac549bc9c0d0681
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:393:11
+  53:     0x5630d535e8af - rustfmt::format::{{closure}}::he51d9681b286c116
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:365:21
+  54:     0x5630d534798b - rustfmt_nightly::Session<T>::override_config::hd5b2d9733196ecdf
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:474:22
+  55:     0x5630d53560ad - rustfmt::format::hd7f64980ece02b32
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:364:17
+  56:     0x5630d5353514 - rustfmt::execute::hb920db613517d230
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:268:14
+  57:     0x5630d5352641 - rustfmt::main::hdb0bdce762c3b85e
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:38:27
+  58:     0x5630d5341d6b - core::ops::function::FnOnce::call_once::h39790646c20f7903
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  59:     0x5630d533961e - std::sys::backtrace::__rust_begin_short_backtrace::hf228ebbd218c0741
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/sys/backtrace.rs:154:18
+  60:     0x5630d5339691 - std::rt::lang_start::{{closure}}::hbca1b3fb6b8ab666
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:164:18
+  61:     0x7fe67728e63a - std::rt::lang_start_internal::hba35b62fbfd58f7b
+  62:     0x5630d533966a - std::rt::lang_start::h2264cd61b460ff92
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:163:17
+  63:     0x5630d535aa3e - main
+  64:     0x7fe67152527e - __libc_start_call_main
+  65:     0x7fe671525339 - __libc_start_main_alias_2
+  66:     0x5630d5338cf5 - _start
+  67:                0x0 - <unknown>
+thread 'main' panicked at src/parse/macros/html.rs:127:29:
+Token { kind: Colon, span: Span { lo: BytePos(59298), hi: BytePos(59299), ctxt: #0 } } src/parse/macros/html.rs 127
+stack backtrace:
+   0:     0x7fe677471ea5 - std::backtrace::Backtrace::create::h848268079fe455dd
+   1:     0x7fe675c770a5 - std::backtrace::Backtrace::force_capture::heaa55bc344fe05e4
+   2:     0x7fe674d9af07 - std[227f26c2b9ed58b0]::panicking::update_hook::<alloc[6cb5b29cce310c23]::boxed::Box<rustc_driver_impl[7a2f35a4b9df6de5]::install_ice_hook::{closure#0}>>::{closure#0}
+   3:     0x7fe675c8e728 - std::panicking::rust_panic_with_hook::h0366964df41daaa9
+   4:     0x7fe675c8e4f7 - std::panicking::begin_panic_handler::{{closure}}::hf072695bd7a726ae
+   5:     0x7fe675c8bed9 - std::sys::backtrace::__rust_end_short_backtrace::h5042bcbd32698216
+   6:     0x7fe675c8e1c4 - rust_begin_unwind
+   7:     0x7fe672a95b13 - core::panicking::panic_fmt::hee7082776d62f18a
+   8:     0x5630d56a0cbf - rustfmt_nightly::parse::macros::html::parse_html::h08dd93a9110b683f
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/html.rs:59:17
+   9:     0x5630d55d0a07 - rustfmt_nightly::macros::format_html::hffee243e4e4b52dd
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:1488:24
+  10:     0x5630d55c5007 - rustfmt_nightly::macros::rewrite_macro_inner::h87dc40ac531e1958
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:264:15
+  11:     0x5630d54edad7 - rustfmt_nightly::macros::rewrite_macro::{{closure}}::hfa5c62d89d882464
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:183:13
+  12:     0x5630d55fe0f1 - core::ops::function::FnOnce::call_once::hc783580ceb988c80
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  13:     0x5630d54c226b - <core::panic::unwind_safe::AssertUnwindSafe<F> as core::ops::function::FnOnce<()>>::call_once::h56d6afb803237b4b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/panic/unwind_safe.rs:272:9
+  14:     0x5630d571c72a - std::panicking::try::do_call::h6e5f5050e1cbaa3b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:557:40
+  15:     0x5630d54d489b - __rust_try
+  16:     0x5630d54d4659 - std::panicking::try::hbdd267432e134372
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:520:19
+  17:     0x5630d54d4659 - std::panic::catch_unwind::hd8ab997d9ac00300
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panic.rs:345:14
+  18:     0x5630d55c2991 - rustfmt_nightly::macros::rewrite_macro::h64bb3b330827a00c
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:182:22
+  19:     0x5630d5554b07 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::{{closure}}::h5da3f176e64062e0
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:47
+  20:     0x5630d55551e9 - rustfmt_nightly::visitor::FmtVisitor::with_context::hd72e3a51bb4b90e1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:1003:22
+  21:     0x5630d544be39 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::h96d3e7ebc21dc637
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:23
+  22:     0x5630d5445c5b - rustfmt_nightly::visitor::FmtVisitor::visit_stmt::h1560a1e929ddd5ca
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:175:21
+  23:     0x5630d544df2a - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:886:13
+  24:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  25:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  26:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  27:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  28:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  29:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  30:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  31:     0x5630d544e15a - rustfmt_nightly::visitor::FmtVisitor::walk_block_stmts::h75d55297b1058d4f
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:917:9
+  32:     0x5630d5446763 - rustfmt_nightly::visitor::FmtVisitor::visit_block::h4c8f3f163ef1b561
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:232:9
+  33:     0x5630d5448eaa - rustfmt_nightly::visitor::FmtVisitor::visit_fn::heab5dac94ec117d1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:423:9
+  34:     0x5630d544a56c - rustfmt_nightly::visitor::FmtVisitor::visit_item::hf00702973275fcc7
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:549:25
+  35:     0x5630d54447f0 - rustfmt_nightly::reorder::<impl rustfmt_nightly::visitor::FmtVisitor>::visit_items_with_reordering::hc704a57aec842be9
+                               at /home/moritz/Documents/rustfmt/src/reorder.rs:346:17
+  36:     0x5630d544dd05 - rustfmt_nightly::visitor::FmtVisitor::walk_mod_items::hcda8a06e5ad2c4e4
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:870:9
+  37:     0x5630d544ebd9 - rustfmt_nightly::visitor::FmtVisitor::format_separate_mod::h9f981018a83b3a38
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:979:9
+  38:     0x5630d533b22e - rustfmt_nightly::formatting::FormatContext<T>::format_file::h7979d18a17ff1af7
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:222:9
+  39:     0x5630d533a29f - rustfmt_nightly::formatting::format_project::h15e804479d1fed36
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:159:9
+  40:     0x5630d533b993 - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::{{closure}}::hd19fc7d4a54dffca
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:49:33
+  41:     0x5630d5349db7 - scoped_tls::ScopedKey<T>::with::h132d49980d70620c
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:171:13
+  42:     0x5630d5351bf3 - rustc_span::create_session_if_not_set_then::{{closure}}::hce78d6c75b47a696
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:50
+  43:     0x5630d5349c3f - scoped_tls::ScopedKey<T>::set::h72029f61ef04985a
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:137:9
+  44:     0x5630d5351b4e - rustc_span::create_session_if_not_set_then::hd3879123736a2b0f
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:9
+  45:     0x5630d53478da - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::hd0afe46916f5624d
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:39:9
+  46:     0x5630d5347d48 - rustfmt_nightly::Session<T>::format::h65d1dfeea32211b6
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:466:9
+  47:     0x5630d535e8e4 - rustfmt::format_and_emit_report::h4ac549bc9c0d0681
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:393:11
+  48:     0x5630d535e8af - rustfmt::format::{{closure}}::he51d9681b286c116
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:365:21
+  49:     0x5630d534798b - rustfmt_nightly::Session<T>::override_config::hd5b2d9733196ecdf
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:474:22
+  50:     0x5630d53560ad - rustfmt::format::hd7f64980ece02b32
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:364:17
+  51:     0x5630d5353514 - rustfmt::execute::hb920db613517d230
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:268:14
+  52:     0x5630d5352641 - rustfmt::main::hdb0bdce762c3b85e
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:38:27
+  53:     0x5630d5341d6b - core::ops::function::FnOnce::call_once::h39790646c20f7903
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  54:     0x5630d533961e - std::sys::backtrace::__rust_begin_short_backtrace::hf228ebbd218c0741
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/sys/backtrace.rs:154:18
+  55:     0x5630d5339691 - std::rt::lang_start::{{closure}}::hbca1b3fb6b8ab666
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:164:18
+  56:     0x7fe67728e63a - std::rt::lang_start_internal::hba35b62fbfd58f7b
+  57:     0x5630d533966a - std::rt::lang_start::h2264cd61b460ff92
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:163:17
+  58:     0x5630d535aa3e - main
+  59:     0x7fe67152527e - __libc_start_call_main
+  60:     0x7fe671525339 - __libc_start_main_alias_2
+  61:     0x5630d5338cf5 - _start
+  62:                0x0 - <unknown>
+thread 'main' panicked at src/parse/macros/html.rs:127:29:
+Token { kind: Colon, span: Span { lo: BytePos(63755), hi: BytePos(63756), ctxt: #0 } } src/parse/macros/html.rs 127
+stack backtrace:
+   0:     0x7fe677471ea5 - std::backtrace::Backtrace::create::h848268079fe455dd
+   1:     0x7fe675c770a5 - std::backtrace::Backtrace::force_capture::heaa55bc344fe05e4
+   2:     0x7fe674d9af07 - std[227f26c2b9ed58b0]::panicking::update_hook::<alloc[6cb5b29cce310c23]::boxed::Box<rustc_driver_impl[7a2f35a4b9df6de5]::install_ice_hook::{closure#0}>>::{closure#0}
+   3:     0x7fe675c8e728 - std::panicking::rust_panic_with_hook::h0366964df41daaa9
+   4:     0x7fe675c8e4f7 - std::panicking::begin_panic_handler::{{closure}}::hf072695bd7a726ae
+   5:     0x7fe675c8bed9 - std::sys::backtrace::__rust_end_short_backtrace::h5042bcbd32698216
+   6:     0x7fe675c8e1c4 - rust_begin_unwind
+   7:     0x7fe672a95b13 - core::panicking::panic_fmt::hee7082776d62f18a
+   8:     0x5630d56a0cbf - rustfmt_nightly::parse::macros::html::parse_html::h08dd93a9110b683f
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/html.rs:59:17
+   9:     0x5630d55d0a07 - rustfmt_nightly::macros::format_html::hffee243e4e4b52dd
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:1488:24
+  10:     0x5630d55c5007 - rustfmt_nightly::macros::rewrite_macro_inner::h87dc40ac531e1958
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:264:15
+  11:     0x5630d54edad7 - rustfmt_nightly::macros::rewrite_macro::{{closure}}::hfa5c62d89d882464
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:183:13
+  12:     0x5630d55fe0f1 - core::ops::function::FnOnce::call_once::hc783580ceb988c80
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  13:     0x5630d54c226b - <core::panic::unwind_safe::AssertUnwindSafe<F> as core::ops::function::FnOnce<()>>::call_once::h56d6afb803237b4b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/panic/unwind_safe.rs:272:9
+  14:     0x5630d571c72a - std::panicking::try::do_call::h6e5f5050e1cbaa3b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:557:40
+  15:     0x5630d54d489b - __rust_try
+  16:     0x5630d54d4659 - std::panicking::try::hbdd267432e134372
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:520:19
+  17:     0x5630d54d4659 - std::panic::catch_unwind::hd8ab997d9ac00300
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panic.rs:345:14
+  18:     0x5630d55c2991 - rustfmt_nightly::macros::rewrite_macro::h64bb3b330827a00c
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:182:22
+  19:     0x5630d5554b07 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::{{closure}}::h5da3f176e64062e0
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:47
+  20:     0x5630d55551e9 - rustfmt_nightly::visitor::FmtVisitor::with_context::hd72e3a51bb4b90e1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:1003:22
+  21:     0x5630d544be39 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::h96d3e7ebc21dc637
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:23
+  22:     0x5630d5445c5b - rustfmt_nightly::visitor::FmtVisitor::visit_stmt::h1560a1e929ddd5ca
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:175:21
+  23:     0x5630d544df2a - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:886:13
+  24:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  25:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  26:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  27:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  28:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  29:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  30:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  31:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  32:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  33:     0x5630d544e15a - rustfmt_nightly::visitor::FmtVisitor::walk_block_stmts::h75d55297b1058d4f
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:917:9
+  34:     0x5630d5446763 - rustfmt_nightly::visitor::FmtVisitor::visit_block::h4c8f3f163ef1b561
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:232:9
+  35:     0x5630d5448eaa - rustfmt_nightly::visitor::FmtVisitor::visit_fn::heab5dac94ec117d1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:423:9
+  36:     0x5630d544a56c - rustfmt_nightly::visitor::FmtVisitor::visit_item::hf00702973275fcc7
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:549:25
+  37:     0x5630d54447f0 - rustfmt_nightly::reorder::<impl rustfmt_nightly::visitor::FmtVisitor>::visit_items_with_reordering::hc704a57aec842be9
+                               at /home/moritz/Documents/rustfmt/src/reorder.rs:346:17
+  38:     0x5630d544dd05 - rustfmt_nightly::visitor::FmtVisitor::walk_mod_items::hcda8a06e5ad2c4e4
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:870:9
+  39:     0x5630d544ebd9 - rustfmt_nightly::visitor::FmtVisitor::format_separate_mod::h9f981018a83b3a38
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:979:9
+  40:     0x5630d533b22e - rustfmt_nightly::formatting::FormatContext<T>::format_file::h7979d18a17ff1af7
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:222:9
+  41:     0x5630d533a29f - rustfmt_nightly::formatting::format_project::h15e804479d1fed36
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:159:9
+  42:     0x5630d533b993 - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::{{closure}}::hd19fc7d4a54dffca
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:49:33
+  43:     0x5630d5349db7 - scoped_tls::ScopedKey<T>::with::h132d49980d70620c
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:171:13
+  44:     0x5630d5351bf3 - rustc_span::create_session_if_not_set_then::{{closure}}::hce78d6c75b47a696
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:50
+  45:     0x5630d5349c3f - scoped_tls::ScopedKey<T>::set::h72029f61ef04985a
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:137:9
+  46:     0x5630d5351b4e - rustc_span::create_session_if_not_set_then::hd3879123736a2b0f
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:9
+  47:     0x5630d53478da - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::hd0afe46916f5624d
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:39:9
+  48:     0x5630d5347d48 - rustfmt_nightly::Session<T>::format::h65d1dfeea32211b6
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:466:9
+  49:     0x5630d535e8e4 - rustfmt::format_and_emit_report::h4ac549bc9c0d0681
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:393:11
+  50:     0x5630d535e8af - rustfmt::format::{{closure}}::he51d9681b286c116
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:365:21
+  51:     0x5630d534798b - rustfmt_nightly::Session<T>::override_config::hd5b2d9733196ecdf
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:474:22
+  52:     0x5630d53560ad - rustfmt::format::hd7f64980ece02b32
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:364:17
+  53:     0x5630d5353514 - rustfmt::execute::hb920db613517d230
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:268:14
+  54:     0x5630d5352641 - rustfmt::main::hdb0bdce762c3b85e
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:38:27
+  55:     0x5630d5341d6b - core::ops::function::FnOnce::call_once::h39790646c20f7903
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  56:     0x5630d533961e - std::sys::backtrace::__rust_begin_short_backtrace::hf228ebbd218c0741
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/sys/backtrace.rs:154:18
+  57:     0x5630d5339691 - std::rt::lang_start::{{closure}}::hbca1b3fb6b8ab666
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:164:18
+  58:     0x7fe67728e63a - std::rt::lang_start_internal::hba35b62fbfd58f7b
+  59:     0x5630d533966a - std::rt::lang_start::h2264cd61b460ff92
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:163:17
+  60:     0x5630d535aa3e - main
+  61:     0x7fe67152527e - __libc_start_call_main
+  62:     0x7fe671525339 - __libc_start_main_alias_2
+  63:     0x5630d5338cf5 - _start
+  64:                0x0 - <unknown>
+thread 'main' panicked at src/parse/macros/html.rs:127:29:
+Token { kind: Colon, span: Span { lo: BytePos(75613), hi: BytePos(75614), ctxt: #0 } } src/parse/macros/html.rs 127
+stack backtrace:
+   0:     0x7fe677471ea5 - std::backtrace::Backtrace::create::h848268079fe455dd
+   1:     0x7fe675c770a5 - std::backtrace::Backtrace::force_capture::heaa55bc344fe05e4
+   2:     0x7fe674d9af07 - std[227f26c2b9ed58b0]::panicking::update_hook::<alloc[6cb5b29cce310c23]::boxed::Box<rustc_driver_impl[7a2f35a4b9df6de5]::install_ice_hook::{closure#0}>>::{closure#0}
+   3:     0x7fe675c8e728 - std::panicking::rust_panic_with_hook::h0366964df41daaa9
+   4:     0x7fe675c8e4f7 - std::panicking::begin_panic_handler::{{closure}}::hf072695bd7a726ae
+   5:     0x7fe675c8bed9 - std::sys::backtrace::__rust_end_short_backtrace::h5042bcbd32698216
+   6:     0x7fe675c8e1c4 - rust_begin_unwind
+   7:     0x7fe672a95b13 - core::panicking::panic_fmt::hee7082776d62f18a
+   8:     0x5630d56a0cbf - rustfmt_nightly::parse::macros::html::parse_html::h08dd93a9110b683f
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/html.rs:59:17
+   9:     0x5630d55d0a07 - rustfmt_nightly::macros::format_html::hffee243e4e4b52dd
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:1488:24
+  10:     0x5630d55c5007 - rustfmt_nightly::macros::rewrite_macro_inner::h87dc40ac531e1958
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:264:15
+  11:     0x5630d54edad7 - rustfmt_nightly::macros::rewrite_macro::{{closure}}::hfa5c62d89d882464
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:183:13
+  12:     0x5630d55fe0f1 - core::ops::function::FnOnce::call_once::hc783580ceb988c80
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  13:     0x5630d54c226b - <core::panic::unwind_safe::AssertUnwindSafe<F> as core::ops::function::FnOnce<()>>::call_once::h56d6afb803237b4b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/panic/unwind_safe.rs:272:9
+  14:     0x5630d571c72a - std::panicking::try::do_call::h6e5f5050e1cbaa3b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:557:40
+  15:     0x5630d54d489b - __rust_try
+  16:     0x5630d54d4659 - std::panicking::try::hbdd267432e134372
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:520:19
+  17:     0x5630d54d4659 - std::panic::catch_unwind::hd8ab997d9ac00300
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panic.rs:345:14
+  18:     0x5630d55c2991 - rustfmt_nightly::macros::rewrite_macro::h64bb3b330827a00c
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:182:22
+  19:     0x5630d5554b07 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::{{closure}}::h5da3f176e64062e0
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:47
+  20:     0x5630d55551e9 - rustfmt_nightly::visitor::FmtVisitor::with_context::hd72e3a51bb4b90e1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:1003:22
+  21:     0x5630d544be39 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::h96d3e7ebc21dc637
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:23
+  22:     0x5630d5445c5b - rustfmt_nightly::visitor::FmtVisitor::visit_stmt::h1560a1e929ddd5ca
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:175:21
+  23:     0x5630d544df2a - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:886:13
+  24:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  25:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  26:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  27:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  28:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  29:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  30:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  31:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  32:     0x5630d544e15a - rustfmt_nightly::visitor::FmtVisitor::walk_block_stmts::h75d55297b1058d4f
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:917:9
+  33:     0x5630d5446763 - rustfmt_nightly::visitor::FmtVisitor::visit_block::h4c8f3f163ef1b561
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:232:9
+  34:     0x5630d5448eaa - rustfmt_nightly::visitor::FmtVisitor::visit_fn::heab5dac94ec117d1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:423:9
+  35:     0x5630d544a56c - rustfmt_nightly::visitor::FmtVisitor::visit_item::hf00702973275fcc7
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:549:25
+  36:     0x5630d54447f0 - rustfmt_nightly::reorder::<impl rustfmt_nightly::visitor::FmtVisitor>::visit_items_with_reordering::hc704a57aec842be9
+                               at /home/moritz/Documents/rustfmt/src/reorder.rs:346:17
+  37:     0x5630d544dd05 - rustfmt_nightly::visitor::FmtVisitor::walk_mod_items::hcda8a06e5ad2c4e4
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:870:9
+  38:     0x5630d544ebd9 - rustfmt_nightly::visitor::FmtVisitor::format_separate_mod::h9f981018a83b3a38
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:979:9
+  39:     0x5630d533b22e - rustfmt_nightly::formatting::FormatContext<T>::format_file::h7979d18a17ff1af7
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:222:9
+  40:     0x5630d533a29f - rustfmt_nightly::formatting::format_project::h15e804479d1fed36
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:159:9
+  41:     0x5630d533b993 - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::{{closure}}::hd19fc7d4a54dffca
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:49:33
+  42:     0x5630d5349db7 - scoped_tls::ScopedKey<T>::with::h132d49980d70620c
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:171:13
+  43:     0x5630d5351bf3 - rustc_span::create_session_if_not_set_then::{{closure}}::hce78d6c75b47a696
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:50
+  44:     0x5630d5349c3f - scoped_tls::ScopedKey<T>::set::h72029f61ef04985a
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:137:9
+  45:     0x5630d5351b4e - rustc_span::create_session_if_not_set_then::hd3879123736a2b0f
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:9
+  46:     0x5630d53478da - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::hd0afe46916f5624d
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:39:9
+  47:     0x5630d5347d48 - rustfmt_nightly::Session<T>::format::h65d1dfeea32211b6
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:466:9
+  48:     0x5630d535e8e4 - rustfmt::format_and_emit_report::h4ac549bc9c0d0681
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:393:11
+  49:     0x5630d535e8af - rustfmt::format::{{closure}}::he51d9681b286c116
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:365:21
+  50:     0x5630d534798b - rustfmt_nightly::Session<T>::override_config::hd5b2d9733196ecdf
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:474:22
+  51:     0x5630d53560ad - rustfmt::format::hd7f64980ece02b32
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:364:17
+  52:     0x5630d5353514 - rustfmt::execute::hb920db613517d230
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:268:14
+  53:     0x5630d5352641 - rustfmt::main::hdb0bdce762c3b85e
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:38:27
+  54:     0x5630d5341d6b - core::ops::function::FnOnce::call_once::h39790646c20f7903
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  55:     0x5630d533961e - std::sys::backtrace::__rust_begin_short_backtrace::hf228ebbd218c0741
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/sys/backtrace.rs:154:18
+  56:     0x5630d5339691 - std::rt::lang_start::{{closure}}::hbca1b3fb6b8ab666
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:164:18
+  57:     0x7fe67728e63a - std::rt::lang_start_internal::hba35b62fbfd58f7b
+  58:     0x5630d533966a - std::rt::lang_start::h2264cd61b460ff92
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:163:17
+  59:     0x5630d535aa3e - main
+  60:     0x7fe67152527e - __libc_start_call_main
+  61:     0x7fe671525339 - __libc_start_main_alias_2
+  62:     0x5630d5338cf5 - _start
+  63:                0x0 - <unknown>
+thread 'main' panicked at src/parse/macros/html.rs:127:29:
+Token { kind: BinOp(Minus), span: Span { lo: BytePos(100582), hi: BytePos(100583), ctxt: #0 } } src/parse/macros/html.rs 127
+stack backtrace:
+   0:     0x7fe677471ea5 - std::backtrace::Backtrace::create::h848268079fe455dd
+   1:     0x7fe675c770a5 - std::backtrace::Backtrace::force_capture::heaa55bc344fe05e4
+   2:     0x7fe674d9af07 - std[227f26c2b9ed58b0]::panicking::update_hook::<alloc[6cb5b29cce310c23]::boxed::Box<rustc_driver_impl[7a2f35a4b9df6de5]::install_ice_hook::{closure#0}>>::{closure#0}
+   3:     0x7fe675c8e728 - std::panicking::rust_panic_with_hook::h0366964df41daaa9
+   4:     0x7fe675c8e4f7 - std::panicking::begin_panic_handler::{{closure}}::hf072695bd7a726ae
+   5:     0x7fe675c8bed9 - std::sys::backtrace::__rust_end_short_backtrace::h5042bcbd32698216
+   6:     0x7fe675c8e1c4 - rust_begin_unwind
+   7:     0x7fe672a95b13 - core::panicking::panic_fmt::hee7082776d62f18a
+   8:     0x5630d56a0cbf - rustfmt_nightly::parse::macros::html::parse_html::h08dd93a9110b683f
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/html.rs:59:17
+   9:     0x5630d55d0a07 - rustfmt_nightly::macros::format_html::hffee243e4e4b52dd
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:1488:24
+  10:     0x5630d55c5007 - rustfmt_nightly::macros::rewrite_macro_inner::h87dc40ac531e1958
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:264:15
+  11:     0x5630d54edad7 - rustfmt_nightly::macros::rewrite_macro::{{closure}}::hfa5c62d89d882464
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:183:13
+  12:     0x5630d55fe0f1 - core::ops::function::FnOnce::call_once::hc783580ceb988c80
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  13:     0x5630d54c226b - <core::panic::unwind_safe::AssertUnwindSafe<F> as core::ops::function::FnOnce<()>>::call_once::h56d6afb803237b4b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/panic/unwind_safe.rs:272:9
+  14:     0x5630d571c72a - std::panicking::try::do_call::h6e5f5050e1cbaa3b
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:557:40
+  15:     0x5630d54d489b - __rust_try
+  16:     0x5630d54d4659 - std::panicking::try::hbdd267432e134372
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panicking.rs:520:19
+  17:     0x5630d54d4659 - std::panic::catch_unwind::hd8ab997d9ac00300
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/panic.rs:345:14
+  18:     0x5630d55c2991 - rustfmt_nightly::macros::rewrite_macro::h64bb3b330827a00c
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:182:22
+  19:     0x5630d5554b07 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::{{closure}}::h5da3f176e64062e0
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:47
+  20:     0x5630d55551e9 - rustfmt_nightly::visitor::FmtVisitor::with_context::hd72e3a51bb4b90e1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:1003:22
+  21:     0x5630d544be39 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::h96d3e7ebc21dc637
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:692:23
+  22:     0x5630d5445c5b - rustfmt_nightly::visitor::FmtVisitor::visit_stmt::h1560a1e929ddd5ca
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:175:21
+  23:     0x5630d544df2a - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:886:13
+  24:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  25:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  26:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  27:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  28:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  29:     0x5630d544e099 - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h233f07ca7bd4612d
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:909:13
+  30:     0x5630d544e15a - rustfmt_nightly::visitor::FmtVisitor::walk_block_stmts::h75d55297b1058d4f
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:917:9
+  31:     0x5630d5446763 - rustfmt_nightly::visitor::FmtVisitor::visit_block::h4c8f3f163ef1b561
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:232:9
+  32:     0x5630d5448eaa - rustfmt_nightly::visitor::FmtVisitor::visit_fn::heab5dac94ec117d1
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:423:9
+  33:     0x5630d544a56c - rustfmt_nightly::visitor::FmtVisitor::visit_item::hf00702973275fcc7
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:549:25
+  34:     0x5630d54447f0 - rustfmt_nightly::reorder::<impl rustfmt_nightly::visitor::FmtVisitor>::visit_items_with_reordering::hc704a57aec842be9
+                               at /home/moritz/Documents/rustfmt/src/reorder.rs:346:17
+  35:     0x5630d544dd05 - rustfmt_nightly::visitor::FmtVisitor::walk_mod_items::hcda8a06e5ad2c4e4
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:870:9
+  36:     0x5630d544ebd9 - rustfmt_nightly::visitor::FmtVisitor::format_separate_mod::h9f981018a83b3a38
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:979:9
+  37:     0x5630d533b22e - rustfmt_nightly::formatting::FormatContext<T>::format_file::h7979d18a17ff1af7
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:222:9
+  38:     0x5630d533a29f - rustfmt_nightly::formatting::format_project::h15e804479d1fed36
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:159:9
+  39:     0x5630d533b993 - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::{{closure}}::hd19fc7d4a54dffca
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:49:33
+  40:     0x5630d5349db7 - scoped_tls::ScopedKey<T>::with::h132d49980d70620c
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:171:13
+  41:     0x5630d5351bf3 - rustc_span::create_session_if_not_set_then::{{closure}}::hce78d6c75b47a696
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:50
+  42:     0x5630d5349c3f - scoped_tls::ScopedKey<T>::set::h72029f61ef04985a
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:137:9
+  43:     0x5630d5351b4e - rustc_span::create_session_if_not_set_then::hd3879123736a2b0f
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/compiler/rustc_span/src/lib.rs:154:9
+  44:     0x5630d53478da - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::hd0afe46916f5624d
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:39:9
+  45:     0x5630d5347d48 - rustfmt_nightly::Session<T>::format::h65d1dfeea32211b6
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:466:9
+  46:     0x5630d535e8e4 - rustfmt::format_and_emit_report::h4ac549bc9c0d0681
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:393:11
+  47:     0x5630d535e8af - rustfmt::format::{{closure}}::he51d9681b286c116
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:365:21
+  48:     0x5630d534798b - rustfmt_nightly::Session<T>::override_config::hd5b2d9733196ecdf
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:474:22
+  49:     0x5630d53560ad - rustfmt::format::hd7f64980ece02b32
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:364:17
+  50:     0x5630d5353514 - rustfmt::execute::hb920db613517d230
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:268:14
+  51:     0x5630d5352641 - rustfmt::main::hdb0bdce762c3b85e
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:38:27
+  52:     0x5630d5341d6b - core::ops::function::FnOnce::call_once::h39790646c20f7903
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/core/src/ops/function.rs:250:5
+  53:     0x5630d533961e - std::sys::backtrace::__rust_begin_short_backtrace::hf228ebbd218c0741
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/sys/backtrace.rs:154:18
+  54:     0x5630d5339691 - std::rt::lang_start::{{closure}}::hbca1b3fb6b8ab666
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:164:18
+  55:     0x7fe67728e63a - std::rt::lang_start_internal::hba35b62fbfd58f7b
+  56:     0x5630d533966a - std::rt::lang_start::h2264cd61b460ff92
+                               at /rustc/c2f74c3f928aeb503f15b4e9ef5778e77f3058b8/library/std/src/rt.rs:163:17
+  57:     0x5630d535aa3e - main
+  58:     0x7fe67152527e - __libc_start_call_main
+  59:     0x7fe671525339 - __libc_start_main_alias_2
+  60:     0x5630d5338cf5 - _start
+  61:                0x0 - <unknown>
