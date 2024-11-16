@@ -1518,9 +1518,14 @@ fn format_html(
             Html::Open { tag, attrs } => {
                 result.push_str("<");
                 result.push_str(tag.as_str());
-                for (name, value) in attrs {
+                for (base_ident, rest_ident, value) in attrs {
                     result.push_str(" ");
-                    result.push_str(&name.iter().map(|a| a.as_str()).join(":"));
+                    result.push_str(base_ident.as_str());
+                    result.push_str(&rest_ident.iter().map(|(delimiter, ident)| match delimiter {
+                        TokenKind::Colon => ":",
+                        TokenKind::BinOp(BinOpToken::Minus) => "-",
+                        _ => panic!()
+                    }.to_owned() + ident.as_str()).join(""));
                     result.push_str("=");
                     match &value {
                         HtmlAttributeValue::Expr(p) => {
