@@ -153,7 +153,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                                     parser.eat(&token_kind.clone());
                                     attrs.push((id, HtmlAttributeValue::Ident(ident)))
                                 }
-                                _ => panic!()
+                                _ => panic!(),
                             }
                         }
                         //eprintln!("parsing gt");

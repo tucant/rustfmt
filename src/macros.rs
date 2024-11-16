@@ -30,7 +30,7 @@ use crate::config::lists::*;
 use crate::expr::{RhsAssignKind, rewrite_array, rewrite_assign_rhs};
 use crate::lists::{ListFormatting, itemize_list, write_list};
 use crate::overflow;
-use crate::parse::macros::html::{parse_html, Html, HtmlAttributeValue};
+use crate::parse::macros::html::{Html, HtmlAttributeValue, parse_html};
 use crate::parse::macros::lazy_static::parse_lazy_static;
 use crate::parse::macros::{ParsedMacroArgs, parse_expr, parse_macro_args};
 use crate::rewrite::{
@@ -1522,24 +1522,24 @@ fn format_html(
                     result.push_str(name.as_str());
                     result.push_str("=");
                     match &value {
-                       HtmlAttributeValue::Expr(p) => {
-                        result.push_str("{");
-                        result.push_str(
-                            &p.rewrite_result(
-                                context,
-                                nested_shape
-                                    .sub_width(1)
-                                    .max_width_error(nested_shape.width, p.span)?,
-                            )?,
-                        );
-                        result.push_str("}");
-                    },
+                        HtmlAttributeValue::Expr(p) => {
+                            result.push_str("{");
+                            result.push_str(
+                                &p.rewrite_result(
+                                    context,
+                                    nested_shape
+                                        .sub_width(1)
+                                        .max_width_error(nested_shape.width, p.span)?,
+                                )?,
+                            );
+                            result.push_str("}");
+                        }
                         HtmlAttributeValue::Literal(str_lit) => {
                             result.push_str("\"");
                             result.push_str(str_lit.symbol.as_str());
                             result.push_str("\"");
-                        },
-                        HtmlAttributeValue::Ident(ident) =>  result.push_str(ident.as_str()),
+                        }
+                        HtmlAttributeValue::Ident(ident) => result.push_str(ident.as_str()),
                     }
                 }
                 result.push_str(">");
