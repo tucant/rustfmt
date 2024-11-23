@@ -1513,9 +1513,11 @@ fn format_html(
                 result.push_str("\"");
             }
             Html::Ident(ident) => {
+                result.push_str(&indent.to_string_with_newline(context.config));
                 result.push_str(ident.as_str());
             }
             Html::Expr(p) => {
+                result.push_str(&indent.to_string_with_newline(context.config));
                 result.push_str("{");
                 result.push_str(
                     &p.rewrite_result(
@@ -1528,11 +1530,13 @@ fn format_html(
                 result.push_str("}");
             }
             Html::Comment(str_lit) => {
+                result.push_str(&indent.to_string_with_newline(context.config));
                 result.push_str("<!--\"");
                 result.push_str(str_lit.symbol.as_str());
                 result.push_str("\"-->")
             }
             Html::Open { tag, attrs } => {
+                result.push_str(&indent.to_string_with_newline(context.config));
                 result.push_str("<");
                 result.push_str(tag.as_str());
                 for (base_ident, rest_ident, value) in attrs {
@@ -1569,6 +1573,7 @@ fn format_html(
                 indent.block_indent(context.config);
             }
             Html::Close { tag } => {
+                result.push_str(&indent.to_string_with_newline(context.config));
                 indent.block_unindent(context.config);
                 result.push_str("</");
                 result.push_str(tag.as_str());
