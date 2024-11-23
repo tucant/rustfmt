@@ -1587,7 +1587,7 @@ fn format_html(
             }
             Html::Close { tag } => {
                 indent = indent.block_unindent(context.config);
-                if tag.as_str() != "input" {
+                if !["input", "meta", "link"].contains(&tag.as_str()) {
                     result.push_str(&indent.to_string_with_newline(context.config));
                 }
                 result.push_str("</");
