@@ -1499,10 +1499,13 @@ fn format_html(
             Html::Open { tag, attrs } => -1,
             Html::Close { tag } => 1,
         };
-        min_indent = std::cmp::min(min_indent, indent);
+        min_indent = std::cmp::max(min_indent, indent);
     };
 
     let mut indent = shape.indent.block_indent(context.config);
+    for i in 0..min_indent {
+        indent = indent.block_indent(context.config);
+    }
     for (i, html) in parsed_elems.iter().enumerate() {
         match html {
             Html::Literal(literal) => {
