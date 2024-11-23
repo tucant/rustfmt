@@ -1489,7 +1489,7 @@ fn format_html(
 
     let mut min_indent = 0;
     let mut indent = 0;
-    
+
     for elem in parsed_elems.iter() {
         indent += match elem {
             Html::Expr(p) => 0,
@@ -1500,7 +1500,7 @@ fn format_html(
             Html::Close { tag } => 1,
         };
         min_indent = std::cmp::max(min_indent, indent);
-    };
+    }
 
     let mut indent = shape.indent.block_indent(context.config);
     for i in 0..min_indent {
@@ -1515,7 +1515,9 @@ fn format_html(
                 result.push_str("\"");
             }
             Html::Ident(ident) => {
-                result.push_str(&indent.to_string_with_newline(context.config));
+                if ident.as_str() != "_" {
+                    result.push_str(&indent.to_string_with_newline(context.config));
+                }
                 result.push_str(ident.as_str());
             }
             Html::Expr(p) => {
@@ -1544,11 +1546,20 @@ fn format_html(
                 for (base_ident, rest_ident, value) in attrs {
                     result.push_str(" ");
                     result.push_str(base_ident.as_str());
-                    result.push_str(&rest_ident.iter().map(|(delimiter, ident)| match delimiter {
-                        TokenKind::Colon => ":",
-                        TokenKind::BinOp(BinOpToken::Minus) => "-",
-                        _ => panic!()
-                    }.to_owned() + ident.as_str()).join(""));
+                    result.push_str(
+                        &rest_ident
+                            .iter()
+                            .map(|(delimiter, ident)| {
+                                match delimiter {
+                                    TokenKind::Colon => ":",
+                                    TokenKind::BinOp(BinOpToken::Minus) => "-",
+                                    _ => panic!(),
+                                }
+                                .to_owned()
+                                    + ident.as_str()
+                            })
+                            .join(""),
+                    );
                     result.push_str("=");
                     match &value {
                         HtmlAttributeValue::Expr(p) => {
@@ -1576,7 +1587,9 @@ fn format_html(
             }
             Html::Close { tag } => {
                 indent = indent.block_unindent(context.config);
-                result.push_str(&indent.to_string_with_newline(context.config));
+                if tag.as_str() != "input" {
+                    result.push_str(&indent.to_string_with_newline(context.config));
+                }
                 result.push_str("</");
                 result.push_str(tag.as_str());
                 result.push_str(">");

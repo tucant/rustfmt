@@ -118,14 +118,17 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                         //eprintln!("parsing ident");
                         let id = parser.token.ident().unwrap().0;
                         parser.eat(&parser.token.kind.clone());
-                        let mut attrs: Vec<(Ident, Vec<(TokenKind, Ident)>, HtmlAttributeValue)> = Vec::new();
+                        let mut attrs: Vec<(Ident, Vec<(TokenKind, Ident)>, HtmlAttributeValue)> =
+                            Vec::new();
                         while parser.token.kind != TokenKind::Gt {
                             //eprintln!("parsing ident");
                             let base_id = parser.token.ident().unwrap().0;
                             parser.eat(&parser.token.kind.clone());
                             let mut rest_id = Vec::new();
                             // also minus?
-                            while parser.token.kind == TokenKind::Colon || parser.token.kind == TokenKind::BinOp(BinOpToken::Minus) {
+                            while parser.token.kind == TokenKind::Colon
+                                || parser.token.kind == TokenKind::BinOp(BinOpToken::Minus)
+                            {
                                 let delimiter = parser.token.kind.clone();
                                 parser.eat(&delimiter);
                                 let i = parser.token.ident().unwrap().0;
@@ -152,7 +155,11 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                                     let Ok(literal) = parser.parse_str_lit() else {
                                         return None;
                                     };
-                                    attrs.push((base_id, rest_id, HtmlAttributeValue::Literal(literal)));
+                                    attrs.push((
+                                        base_id,
+                                        rest_id,
+                                        HtmlAttributeValue::Literal(literal),
+                                    ));
                                 }
                                 token_kind @ TokenKind::Ident(_, _) => {
                                     //eprintln!("parsing ident {:?}", parser.token);
