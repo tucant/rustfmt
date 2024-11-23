@@ -1488,9 +1488,26 @@ fn format_html(
 
     let parsed_elems = parse_html(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
 
+    let mut min_indent = 0;
+    let mut indent = 0;
+    
+    for elem in parsed_elems.iter() {
+        indent += match elem {
+            Html::Expr(p) => 0,
+            Html::Literal(str_lit) => 0,
+            Html::Ident(ident) => 0,
+            Html::Comment(str_lit) => 0,
+            Html::Open { tag, attrs } => -1,
+            Html::Close { tag } => 1,
+        };
+        min_indent = std::cmp::min(min_indent, indent);
+    };
+
+    let mut indent = shape.indent.block_indent(context.config);
     for (i, html) in parsed_elems.iter().enumerate() {
         match html {
             Html::Literal(literal) => {
+                result.push_str(&indent.to_string_with_newline(context.config));
                 result.push_str("\"");
                 result.push_str(literal.symbol.as_str());
                 result.push_str("\"");
@@ -1549,8 +1566,10 @@ fn format_html(
                     }
                 }
                 result.push_str(">");
+                indent.block_indent(context.config);
             }
             Html::Close { tag } => {
+                indent.block_unindent(context.config);
                 result.push_str("</");
                 result.push_str(tag.as_str());
                 result.push_str(">");

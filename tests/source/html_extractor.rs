@@ -1,7 +1,7 @@
 pub fn main() {
     html_extractor::html! {
         <h1>
-        "test"
+            "test"
         </h1>
     }
 }
