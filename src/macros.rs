@@ -1484,7 +1484,6 @@ fn format_html(
         .with_max_width(context.config);
 
     result.push_str("html_extractor::html! {");
-    result.push_str(&nested_shape.indent.to_string_with_newline(context.config));
 
     let parsed_elems = parse_html(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
 
@@ -1570,11 +1569,11 @@ fn format_html(
                     }
                 }
                 result.push_str(">");
-                indent.block_indent(context.config);
+                indent = indent.block_indent(context.config);
             }
             Html::Close { tag } => {
+                indent = indent.block_unindent(context.config);
                 result.push_str(&indent.to_string_with_newline(context.config));
-                indent.block_unindent(context.config);
                 result.push_str("</");
                 result.push_str(tag.as_str());
                 result.push_str(">");
