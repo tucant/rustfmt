@@ -1590,7 +1590,12 @@ fn format_html(
             }
             Html::Close { tag } => {
                 indent = indent.block_unindent(context.config);
-                if !["input", "meta", "link"].contains(&tag.as_str()) {
+                if ![
+                    "area", "base", "br", "col", "command", "embed", "hr", "img", "input",
+                    "keygen", "link", "meta", "param", "source", "track", "wbr",
+                ]
+                .contains(&tag.as_str())
+                {
                     result.push_str(&indent.to_string_with_newline(context.config));
                 }
                 result.push_str("</");
