@@ -1567,9 +1567,12 @@ fn format_html(
                             result.push_str(
                                 &p.rewrite_result(
                                     context,
-                                    nested_shape
+                                    Shape::indented(indent, context.config)
                                         .sub_width(1)
-                                        .max_width_error(nested_shape.width, p.span)?,
+                                        .max_width_error(
+                                            Shape::indented(indent, context.config).width,
+                                            p.span,
+                                        )?,
                                 )?,
                             );
                             result.push_str("}");
