@@ -1,5 +1,12 @@
+// rustfmt-format_strings: true
 pub fn main() {
-    html_extractor::html!(
-                <a class=_linkclass href={&format!("/scripts/mgrqispi.dll?APPNAME=CampusNet&PRGNAME=EXTERNALPAGES&ARGUMENTS=-N{id:015},-N000464,-Avvarchivstart%2Ehtml")}>"Archiv"</a>
-    );
+    // the string is so long it prevents reformatting
+    html_extractor::html! {
+        <a href={&format!(
+            "/scripts/mgrqispi.dll?APPNAME=CampusNet&PRGNAME=EXTERNALPAGES&ARGUMENTS=-N{id:015},\
+             -N000464,-Avvarchivstart%2Ehtml"
+        )}>
+            "Archiv"
+        </a>
+    };
 }
