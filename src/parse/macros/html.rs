@@ -29,6 +29,7 @@ pub(crate) enum Html {
 }
 
 pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Option<Vec<Html>> {
+    let ts_string = format!("{:?}", ts);
     //eprintln!("parsing token stream {:?}", ts);
     let mut result = vec![];
     let mut parser = super::build_parser(context, ts);
@@ -116,13 +117,13 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                     }
                     _ => {
                         //eprintln!("parsing ident");
-                        let id = parser.token.ident().unwrap().0;
+                        let id = parser.token.ident().expect(&ts_string).0;
                         parser.eat(&parser.token.kind.clone());
                         let mut attrs: Vec<(Ident, Vec<(TokenKind, Ident)>, HtmlAttributeValue)> =
                             Vec::new();
                         while parser.token.kind != TokenKind::Gt {
                             //eprintln!("parsing ident");
-                            let base_id = parser.token.ident().unwrap().0;
+                            let base_id = parser.token.ident().expect(&ts_string).0;
                             parser.eat(&parser.token.kind.clone());
                             let mut rest_id = Vec::new();
                             // also minus?
