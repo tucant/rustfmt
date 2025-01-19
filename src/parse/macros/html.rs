@@ -3,11 +3,13 @@ use rustc_ast::token::{BinOpToken, Lit, TokenKind};
 use rustc_ast::tokenstream::TokenStream;
 use rustc_ast::{Expr, StrLit};
 use rustc_ast::{ast, token::Delimiter};
+use rustc_parse::exp;
 use rustc_span::symbol::{self, Ident, kw};
 use tracing::{debug, info, warn};
-
+use rustc_parse::parser::ExpTokenPair;
+use rustc_parse::parser::TokenType;
 use crate::rewrite::RewriteContext;
-
+use rustc_ast::token;
 pub(crate) enum HtmlAttributeValue {
     Expr(P<Expr>),
     Literal(StrLit),
@@ -66,14 +68,14 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
         match &parser.token.kind {
             TokenKind::OpenDelim(Delimiter::Brace) => {
                 //eprintln!("parsing inner expr");
-                parser.eat(&TokenKind::OpenDelim(Delimiter::Brace));
+                parser.eat(exp!(OpenBrace));
                 let expr = match parser.parse_expr() {
                     Ok(expr) => expr,
                     Err(error) => {
                         panic!("{:?} {:?}", error, parser.parse_tokens());
                     }
                 };
-                parser.eat(&TokenKind::CloseDelim(Delimiter::Brace));
+                parser.eat(exp!(CloseBrace));
                 result.push(Html::Expr(expr))
             }
             TokenKind::Literal(_) => {
@@ -91,28 +93,31 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
             }
             TokenKind::Lt => {
                 //eprintln!("parsing lt");
-                parse_eat!(&TokenKind::Lt);
+                parse_eat!(exp!(Lt));
                 match parser.token.kind {
                     TokenKind::BinOp(BinOpToken::Slash) => {
                         //eprintln!("parsing slash");
-                        parse_eat!(&TokenKind::BinOp(BinOpToken::Slash));
+                        parse_eat!(ExpTokenPair {
+                            tok: &token::BinOp(token::BinOpToken::Slash),
+                            token_type: TokenType::Slash,
+                        });
                         //eprintln!("parsing ident");
                         let id = parser.token.ident().unwrap().0;
                         parser.eat(&parser.token.kind.clone());
                         //eprintln!("parsing gt");
-                        parse_eat!(&TokenKind::Gt);
+                        parse_eat!(exp!(Gt));
                         result.push(Html::Close { tag: id });
                     }
                     TokenKind::Not => {
                         //eprintln!("parsing not");
-                        parse_eat!(&TokenKind::Not);
-                        parse_eat!(&TokenKind::BinOp(BinOpToken::Minus));
-                        parse_eat!(&TokenKind::BinOp(BinOpToken::Minus));
+                        parse_eat!(exp!(Not));
+                        parse_eat!(exp!(Minus));
+                        parse_eat!(exp!(Minus));
                         let Ok(comment) = parser.parse_str_lit() else {
                             return None;
                         };
-                        parse_eat!(&TokenKind::BinOp(BinOpToken::Minus));
-                        parse_eat!(&TokenKind::RArrow);
+                        parse_eat!(exp!(Minus));
+                        parse_eat!(exp!(RArrow));
                         result.push(Html::Comment(comment));
                     }
                     _ => {
@@ -137,11 +142,11 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                                 rest_id.push((delimiter, i));
                             }
                             //eprintln!("parsing eq");
-                            parse_eat!(&TokenKind::Eq); // here
+                            parse_eat!(expr!(Eq)); // here
                             //eprintln!("parsing literal or expr");
                             match &parser.token.kind {
                                 TokenKind::OpenDelim(Delimiter::Brace) => {
-                                    parser.eat(&TokenKind::OpenDelim(Delimiter::Brace));
+                                    parser.eat(exp!(OpenBrace));
                                     //eprintln!("parsing inner expr");
                                     let expr = match parser.parse_expr() {
                                         Ok(expr) => expr,
@@ -149,7 +154,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                                             panic!("{:?} {:?}", error, parser.parse_tokens());
                                         }
                                     };
-                                    parser.eat(&TokenKind::CloseDelim(Delimiter::Brace));
+                                    parser.eat(exp!(CloseBrace));
                                     attrs.push((base_id, rest_id, HtmlAttributeValue::Expr(expr)));
                                 }
                                 TokenKind::Literal(_) => {
@@ -173,7 +178,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                             }
                         }
                         //eprintln!("parsing gt");
-                        parse_eat!(&TokenKind::Gt);
+                        parse_eat!(exp!(Gt));
                         result.push(Html::Open { tag: id, attrs });
                     }
                 }
