@@ -1,15 +1,15 @@
+use crate::rewrite::RewriteContext;
 use rustc_ast::ptr::P;
+use rustc_ast::token;
 use rustc_ast::token::{BinOpToken, Lit, TokenKind};
 use rustc_ast::tokenstream::TokenStream;
 use rustc_ast::{Expr, StrLit};
 use rustc_ast::{ast, token::Delimiter};
 use rustc_parse::exp;
-use rustc_span::symbol::{self, Ident, kw};
-use tracing::{debug, info, warn};
 use rustc_parse::parser::ExpTokenPair;
 use rustc_parse::parser::TokenType;
-use crate::rewrite::RewriteContext;
-use rustc_ast::token;
+use rustc_span::symbol::{self, Ident, kw};
+use tracing::{debug, info, warn};
 pub(crate) enum HtmlAttributeValue {
     Expr(P<Expr>),
     Literal(StrLit),
@@ -88,7 +88,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                 //eprintln!("parsing ident {:?}", parser.token);
                 //let id = parse_or!(parse_ident);
                 let ident = parser.token.ident().unwrap().0;
-                parser.eat(&token_kind.clone());
+                parser.bump();
                 result.push(Html::Ident(ident))
             }
             TokenKind::Lt => {
@@ -97,13 +97,10 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                 match parser.token.kind {
                     TokenKind::BinOp(BinOpToken::Slash) => {
                         //eprintln!("parsing slash");
-                        parse_eat!(ExpTokenPair {
-                            tok: &token::BinOp(token::BinOpToken::Slash),
-                            token_type: TokenType::Slash,
-                        });
+                        parser.bump();
                         //eprintln!("parsing ident");
                         let id = parser.token.ident().unwrap().0;
-                        parser.eat(&parser.token.kind.clone());
+                        parser.bump();
                         //eprintln!("parsing gt");
                         parse_eat!(exp!(Gt));
                         result.push(Html::Close { tag: id });
@@ -123,26 +120,26 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                     _ => {
                         //eprintln!("parsing ident");
                         let id = parser.token.ident().expect(&ts_string).0;
-                        parser.eat(&parser.token.kind.clone());
+                        parser.bump();
                         let mut attrs: Vec<(Ident, Vec<(TokenKind, Ident)>, HtmlAttributeValue)> =
                             Vec::new();
                         while parser.token.kind != TokenKind::Gt {
                             //eprintln!("parsing ident");
                             let base_id = parser.token.ident().expect(&ts_string).0;
-                            parser.eat(&parser.token.kind.clone());
+                            parser.bump();
                             let mut rest_id = Vec::new();
                             // also minus?
                             while parser.token.kind == TokenKind::Colon
                                 || parser.token.kind == TokenKind::BinOp(BinOpToken::Minus)
                             {
                                 let delimiter = parser.token.kind.clone();
-                                parser.eat(&delimiter);
+                                parser.bump();
                                 let i = parser.token.ident().unwrap().0;
-                                parser.eat(&parser.token.kind.clone());
+                                parser.bump();
                                 rest_id.push((delimiter, i));
                             }
                             //eprintln!("parsing eq");
-                            parse_eat!(expr!(Eq)); // here
+                            parse_eat!(exp!(Eq)); // here
                             //eprintln!("parsing literal or expr");
                             match &parser.token.kind {
                                 TokenKind::OpenDelim(Delimiter::Brace) => {
@@ -171,7 +168,7 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
                                     //eprintln!("parsing ident {:?}", parser.token);
                                     //let id = parse_or!(parse_ident);
                                     let ident = parser.token.ident().unwrap().0;
-                                    parser.eat(&token_kind.clone());
+                                    parser.bump();
                                     attrs.push((base_id, rest_id, HtmlAttributeValue::Ident(ident)))
                                 }
                                 _ => panic!(),

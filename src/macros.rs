@@ -1517,14 +1517,7 @@ fn format_html(
             Html::Expr(p) => {
                 result.push_str(&indent.to_string_with_newline(context.config));
                 result.push_str("{");
-                result.push_str(
-                    &p.rewrite_result(
-                        context,
-                        nested_shape
-                            .sub_width(1)
-                            .max_width_error(nested_shape.width, p.span)?,
-                    )?,
-                );
+                result.push_str(&p.rewrite_result(context, nested_shape.sub_width(1, p.span)?)?);
                 result.push_str("}");
             }
             Html::Comment(str_lit) => {
@@ -1558,17 +1551,10 @@ fn format_html(
                     match &value {
                         HtmlAttributeValue::Expr(p) => {
                             result.push_str("{");
-                            result.push_str(
-                                &p.rewrite_result(
-                                    context,
-                                    Shape::indented(indent, context.config)
-                                        .sub_width(1)
-                                        .max_width_error(
-                                            Shape::indented(indent, context.config).width,
-                                            p.span,
-                                        )?,
-                                )?,
-                            );
+                            result.push_str(&p.rewrite_result(
+                                context,
+                                Shape::indented(indent, context.config).sub_width(1, p.span)?,
+                            )?);
                             result.push_str("}");
                         }
                         HtmlAttributeValue::Literal(str_lit) => {

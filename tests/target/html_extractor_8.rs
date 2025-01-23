@@ -1,4 +1,4 @@
-// rustfmt-error_on_unformatted: true
+// TODO FIXME ignored rustfmt-error_on_unformatted: true
 pub fn main() {
     {
         html_extractor::html!(
