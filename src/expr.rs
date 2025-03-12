@@ -88,7 +88,6 @@ pub(crate) fn format_expr(
     context: &RewriteContext<'_>,
     shape: Shape,
 ) -> RewriteResult {
-    // here
     skip_out_of_file_lines_range_err!(context, expr.span);
 
     if contains_skip(&*expr.attrs) {

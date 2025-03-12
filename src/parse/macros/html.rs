@@ -10,6 +10,7 @@ use rustc_parse::parser::ExpTokenPair;
 use rustc_parse::parser::TokenType;
 use rustc_span::symbol::{self, Ident, kw};
 use tracing::{debug, info, warn};
+
 pub(crate) enum HtmlAttributeValue {
     Expr(P<Expr>),
     Literal(StrLit),
@@ -28,6 +29,12 @@ pub(crate) enum Html {
     Close {
         tag: Ident,
     },
+    /*If {
+        conditional: P<Expr>,
+        body: Vec<Html>,
+        variable: Ident,
+        result_expr: P<Expr>
+    }*/
 }
 
 pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Option<Vec<Html>> {
@@ -66,6 +73,9 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
     }
     while parser.token.kind != TokenKind::Eof {
         match &parser.token.kind {
+            //TokenKind::If => {
+                
+            //}
             TokenKind::OpenDelim(Delimiter::Brace) => {
                 //eprintln!("parsing inner expr");
                 parser.eat(exp!(OpenBrace));
