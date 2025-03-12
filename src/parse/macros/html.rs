@@ -29,12 +29,12 @@ pub(crate) enum Html {
     Close {
         tag: Ident,
     },
-    /*If {
+    If {
         conditional: P<Expr>,
         body: Vec<Html>,
         variable: Ident,
         result_expr: P<Expr>
-    }*/
+    }
 }
 
 pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Option<Vec<Html>> {
@@ -73,9 +73,11 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
     }
     while parser.token.kind != TokenKind::Eof {
         match &parser.token.kind {
-            //TokenKind::If => {
+            token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "if" => {
+                eprintln!("got an if");
                 
-            //}
+
+            }
             TokenKind::OpenDelim(Delimiter::Brace) => {
                 //eprintln!("parsing inner expr");
                 parser.eat(exp!(OpenBrace));

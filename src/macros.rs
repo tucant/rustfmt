@@ -1492,6 +1492,7 @@ fn format_html(
             Html::Comment(str_lit) => 0,
             Html::Open { tag, attrs } => -1,
             Html::Close { tag } => 1,
+            Html::If { conditional, body, variable, result_expr } => 0,
         };
         min_indent = std::cmp::max(min_indent, indent);
     }
@@ -1581,6 +1582,10 @@ fn format_html(
                 result.push_str("</");
                 result.push_str(tag.as_str());
                 result.push_str(">");
+            }
+            Html::If { conditional, body, variable, result_expr } => {
+                result.push_str("if");
+
             }
         }
     }
