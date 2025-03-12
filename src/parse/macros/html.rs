@@ -75,7 +75,17 @@ pub(crate) fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Optio
         match &parser.token.kind {
             token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "if" => {
                 eprintln!("got an if");
-                parser.eat_keyword(exp!(If));
+                assert!(parser.eat_keyword(exp!(If)));
+                let expr = match parser.parse_expr() {
+                    Ok(expr) => expr,
+                    Err(error) => {
+                        panic!("{:?} {:?}", error, parser.parse_tokens());
+                    }
+                };
+                parser.eat(exp!(OpenBrace));
+                
+                parser.eat(exp!(CloseBrace));
+
             }
             TokenKind::OpenDelim(Delimiter::Brace) => {
                 //eprintln!("parsing inner expr");
