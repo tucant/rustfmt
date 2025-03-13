@@ -6,8 +6,8 @@ use rustc_ast::tokenstream::TokenStream;
 use rustc_ast::{Expr, StrLit};
 use rustc_ast::{ast, token::Delimiter};
 use rustc_parse::exp;
-use rustc_parse::parser::{ExpTokenPair, Parser};
 use rustc_parse::parser::TokenType;
+use rustc_parse::parser::{ExpTokenPair, Parser};
 use rustc_span::symbol::{self, Ident, kw};
 use tracing::{debug, info, warn};
 
@@ -37,7 +37,11 @@ pub(crate) enum Html {
     },
 }
 
-pub(crate) fn parse_single_html(context: &RewriteContext<'_>, ts_string: &str, parser: &mut Parser<'_>) -> Option<Vec<Html>> {
+pub(crate) fn parse_single_html(
+    context: &RewriteContext<'_>,
+    ts_string: &str,
+    parser: &mut Parser<'_>,
+) -> Option<Vec<Html>> {
     macro_rules! parse_eat {
         ($($arg:expr),*) => {
             if !parser.eat($($arg,)*) {
@@ -58,9 +62,25 @@ pub(crate) fn parse_single_html(context: &RewriteContext<'_>, ts_string: &str, p
                 }
             };
             parser.eat(exp!(OpenBrace));
-            
+            let mut htmls = Vec::new();
+            while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
+                if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
+                    htmls.extend(some_htmls);
+                }
+            }
             parser.eat(exp!(CloseBrace));
-
+            parser.eat(exp!(Eq));
+            parser.eat(exp!(Gt));
+            let ident = parser.token.ident().unwrap().0;
+            parser.bump();
+            parser.eat(exp!(Eq));
+            let result_expr = match parser.parse_expr() {
+                Ok(expr) => expr,
+                Err(error) => {
+                    panic!("{:?} {:?}", error, parser.parse_tokens());
+                }
+            };
+            parser.eat(exp!(Semi));
         }
         TokenKind::OpenDelim(Delimiter::Brace) => {
             //eprintln!("parsing inner expr");
