@@ -66,6 +66,8 @@ pub(crate) fn parse_single_html(
             while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
                 if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
                     htmls.extend(some_htmls);
+                } else {
+                    return None;
                 }
             }
             parser.eat(exp!(CloseBrace));
