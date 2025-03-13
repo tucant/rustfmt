@@ -55,6 +55,7 @@ pub(crate) fn parse_single_html(
             eprintln!("got an if");
             assert!(parser.eat_keyword(exp!(If)));
             // This eats too much
+            // we could in theory try to parse matching braces/parens and then extract based on that?
             let expr = match parser.parse_expr() {
                 Ok(expr) => expr,
                 Err(error) => {
