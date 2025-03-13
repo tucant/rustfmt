@@ -54,13 +54,14 @@ pub(crate) fn parse_single_html(
         token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "if" => {
             eprintln!("got an if");
             assert!(parser.eat_keyword(exp!(If)));
+            // This eats too much
             let expr = match parser.parse_expr() {
                 Ok(expr) => expr,
                 Err(error) => {
                     panic!("{:?} {:?}", error, parser.parse_tokens());
                 }
             };
-            assert!(parser.eat(exp!(OpenBrace)));
+            assert!(parser.eat(exp!(OpenBrace)), "{:?} {:?}", parser.token.kind, expr.span);
             let mut htmls = Vec::new();
             while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
                 if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
