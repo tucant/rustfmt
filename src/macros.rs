@@ -1564,15 +1564,18 @@ fn format_html_inner(
             variable,
             result_expr,
         } => {
-            result.push_str("\nif ");
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("if ");
             result.push_str(&conditional.rewrite_result(
                 context,
                 Shape::indented(*indent, context.config).sub_width(1, conditional.span)?,
             )?);
             result.push_str(" {");
+            *indent = indent.block_indent(context.config);
             for elem in body {
                 format_html_inner(context, shape, indent, result, elem)?;
             }
+            *indent = indent.block_unindent(context.config);
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("} ");
             result.push_str("=> ");
@@ -1582,6 +1585,7 @@ fn format_html_inner(
                 context,
                 Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
             )?);
+            result.push_str(";");
         }
     }
     Ok(result.to_string())
