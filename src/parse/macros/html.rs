@@ -54,29 +54,24 @@ pub(crate) fn parse_single_html(
         token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "if" => {
             eprintln!("got an if");
             assert!(parser.eat_keyword(exp!(If)));
-            let expr = match parser.parse_expr_cond() {
+            let conditional = match parser.parse_expr_cond() {
                 Ok(expr) => expr,
                 Err(error) => {
                     panic!("{:?} {:?}", error, parser.parse_tokens());
                 }
             };
-            assert!(
-                parser.eat(exp!(OpenBrace)),
-                "{:?} {:?}",
-                parser.token.kind,
-                expr.span
-            );
-            let mut htmls = Vec::new();
+            assert!(parser.eat(exp!(OpenBrace)));
+            let mut body = Vec::new();
             while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
                 if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
-                    htmls.extend(some_htmls);
+                    body.extend(some_htmls);
                 } else {
                     panic!();
                 }
             }
             assert!(parser.eat(exp!(CloseBrace)));
             assert!(parser.eat(exp!(FatArrow)));
-            let ident = parser.token.ident().unwrap().0;
+            let variable = parser.token.ident().unwrap().0;
             parser.bump();
             assert!(parser.eat(exp!(Eq)));
             let result_expr = match parser.parse_expr() {
@@ -86,6 +81,12 @@ pub(crate) fn parse_single_html(
                 }
             };
             assert!(parser.eat(exp!(Semi)));
+            result.push(Html::If {
+                conditional,
+                body,
+                variable,
+                result_expr,
+            })
         }
         TokenKind::OpenDelim(Delimiter::Brace) => {
             //eprintln!("parsing inner expr");

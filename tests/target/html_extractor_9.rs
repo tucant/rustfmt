@@ -1,9 +1,12 @@
 pub fn main() {
-    html_extractor::html!(
-        <div></div>
+    html_extractor::html! {
+        <div>
+        </div>
         if html_handler {
-            <div></div>
+            <div>
+            </div>
         } => value = value;
-        <div></div>
-    );
+        <div>
+        </div>
+    };
 }

@@ -1466,10 +1466,16 @@ fn format_lazy_static(
     Ok(result)
 }
 
-fn format_html_inner(context: &RewriteContext<'_>, shape: Shape, indent: Indent, result: &mut String, html: &Html) -> RewriteResult {
+fn format_html_inner(
+    context: &RewriteContext<'_>,
+    shape: Shape,
+    indent: &mut Indent,
+    result: &mut String,
+    html: &Html,
+) -> RewriteResult {
     let nested_shape = shape
-    .block_indent(context.config.tab_spaces())
-    .with_max_width(context.config);
+        .block_indent(context.config.tab_spaces())
+        .with_max_width(context.config);
 
     match html {
         Html::Literal(literal) => {
@@ -1523,7 +1529,7 @@ fn format_html_inner(context: &RewriteContext<'_>, shape: Shape, indent: Indent,
                         result.push_str("{");
                         result.push_str(&p.rewrite_result(
                             context,
-                            Shape::indented(indent, context.config).sub_width(1, p.span)?,
+                            Shape::indented(*indent, context.config).sub_width(1, p.span)?,
                         )?);
                         result.push_str("}");
                     }
@@ -1536,13 +1542,13 @@ fn format_html_inner(context: &RewriteContext<'_>, shape: Shape, indent: Indent,
                 }
             }
             result.push_str(">");
-            indent = indent.block_indent(context.config);
+            *indent = indent.block_indent(context.config);
         }
         Html::Close { tag } => {
-            indent = indent.block_unindent(context.config);
+            *indent = indent.block_unindent(context.config);
             if ![
-                "area", "base", "br", "col", "command", "embed", "hr", "img", "input",
-                "keygen", "link", "meta", "param", "source", "track", "wbr",
+                "area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen",
+                "link", "meta", "param", "source", "track", "wbr",
             ]
             .contains(&tag.as_str())
             {
@@ -1558,20 +1564,23 @@ fn format_html_inner(context: &RewriteContext<'_>, shape: Shape, indent: Indent,
             variable,
             result_expr,
         } => {
-            result.push_str("if");
+            result.push_str("\nif ");
             result.push_str(&conditional.rewrite_result(
                 context,
-                Shape::indented(indent, context.config).sub_width(1, conditional.span)?,
+                Shape::indented(*indent, context.config).sub_width(1, conditional.span)?,
             )?);
-            result.push_str("{");
-            // TODO parse inner
-            result.push_str("}");
-            result.push_str("=>");
+            result.push_str(" {");
+            for elem in body {
+                format_html_inner(context, shape, indent, result, elem)?;
+            }
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("} ");
+            result.push_str("=> ");
             result.push_str(variable.as_str());
-            result.push_str("=");
+            result.push_str(" = ");
             result.push_str(&result_expr.rewrite_result(
                 context,
-                Shape::indented(indent, context.config).sub_width(1, result_expr.span)?,
+                Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
             )?);
         }
     }
@@ -1617,7 +1626,7 @@ fn format_html(
     }
 
     for (i, html) in parsed_elems.iter().enumerate() {
-        format_html_inner(context, shape, indent, &mut result, html)?;
+        format_html_inner(context, shape, &mut indent, &mut result, html)?;
     }
 
     result.push_str(&shape.indent.to_string_with_newline(context.config));
