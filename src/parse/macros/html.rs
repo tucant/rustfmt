@@ -202,7 +202,7 @@ pub(crate) fn parse_single_html(
                 }
             }
         }
-        _ => panic!(),
+        other => panic!("unexpected token {:?}", other),
     }
     Some(result)
 }
