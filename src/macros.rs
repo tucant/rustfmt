@@ -1466,6 +1466,118 @@ fn format_lazy_static(
     Ok(result)
 }
 
+fn format_html_inner(context: &RewriteContext<'_>, shape: Shape, indent: Indent, result: &mut String, html: &Html) -> RewriteResult {
+    let nested_shape = shape
+    .block_indent(context.config.tab_spaces())
+    .with_max_width(context.config);
+
+    match html {
+        Html::Literal(literal) => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("\"");
+            result.push_str(literal.symbol.as_str());
+            result.push_str("\"");
+        }
+        Html::Ident(ident) => {
+            if ident.as_str() != "_" {
+                result.push_str(&indent.to_string_with_newline(context.config));
+            }
+            result.push_str(ident.as_str());
+        }
+        Html::Expr(p) => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("{");
+            result.push_str(&p.rewrite_result(context, nested_shape.sub_width(1, p.span)?)?);
+            result.push_str("}");
+        }
+        Html::Comment(str_lit) => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("<!--\"");
+            result.push_str(str_lit.symbol.as_str());
+            result.push_str("\"-->")
+        }
+        Html::Open { tag, attrs } => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("<");
+            result.push_str(tag.as_str());
+            for (base_ident, rest_ident, value) in attrs {
+                result.push_str(" ");
+                result.push_str(base_ident.as_str());
+                result.push_str(
+                    &rest_ident
+                        .iter()
+                        .map(|(delimiter, ident)| {
+                            match delimiter {
+                                TokenKind::Colon => ":",
+                                TokenKind::BinOp(BinOpToken::Minus) => "-",
+                                _ => panic!(),
+                            }
+                            .to_owned()
+                                + ident.as_str()
+                        })
+                        .join(""),
+                );
+                result.push_str("=");
+                match &value {
+                    HtmlAttributeValue::Expr(p) => {
+                        result.push_str("{");
+                        result.push_str(&p.rewrite_result(
+                            context,
+                            Shape::indented(indent, context.config).sub_width(1, p.span)?,
+                        )?);
+                        result.push_str("}");
+                    }
+                    HtmlAttributeValue::Literal(str_lit) => {
+                        result.push_str("\"");
+                        result.push_str(str_lit.symbol.as_str());
+                        result.push_str("\"");
+                    }
+                    HtmlAttributeValue::Ident(ident) => result.push_str(ident.as_str()),
+                }
+            }
+            result.push_str(">");
+            indent = indent.block_indent(context.config);
+        }
+        Html::Close { tag } => {
+            indent = indent.block_unindent(context.config);
+            if ![
+                "area", "base", "br", "col", "command", "embed", "hr", "img", "input",
+                "keygen", "link", "meta", "param", "source", "track", "wbr",
+            ]
+            .contains(&tag.as_str())
+            {
+                result.push_str(&indent.to_string_with_newline(context.config));
+            }
+            result.push_str("</");
+            result.push_str(tag.as_str());
+            result.push_str(">");
+        }
+        Html::If {
+            conditional,
+            body,
+            variable,
+            result_expr,
+        } => {
+            result.push_str("if");
+            result.push_str(&conditional.rewrite_result(
+                context,
+                Shape::indented(indent, context.config).sub_width(1, conditional.span)?,
+            )?);
+            result.push_str("{");
+            // TODO parse inner
+            result.push_str("}");
+            result.push_str("=>");
+            result.push_str(variable.as_str());
+            result.push_str("=");
+            result.push_str(&result_expr.rewrite_result(
+                context,
+                Shape::indented(indent, context.config).sub_width(1, result_expr.span)?,
+            )?);
+        }
+    }
+    Ok(result.to_string())
+}
+
 fn format_html(
     context: &RewriteContext<'_>,
     shape: Shape,
@@ -1473,9 +1585,6 @@ fn format_html(
     span: Span,
 ) -> RewriteResult {
     let mut result = String::with_capacity(1024);
-    let nested_shape = shape
-        .block_indent(context.config.tab_spaces())
-        .with_max_width(context.config);
 
     result.push_str("html_extractor::html! {");
 
@@ -1506,97 +1615,9 @@ fn format_html(
     for i in 0..min_indent {
         indent = indent.block_indent(context.config);
     }
+
     for (i, html) in parsed_elems.iter().enumerate() {
-        match html {
-            Html::Literal(literal) => {
-                result.push_str(&indent.to_string_with_newline(context.config));
-                result.push_str("\"");
-                result.push_str(literal.symbol.as_str());
-                result.push_str("\"");
-            }
-            Html::Ident(ident) => {
-                if ident.as_str() != "_" {
-                    result.push_str(&indent.to_string_with_newline(context.config));
-                }
-                result.push_str(ident.as_str());
-            }
-            Html::Expr(p) => {
-                result.push_str(&indent.to_string_with_newline(context.config));
-                result.push_str("{");
-                result.push_str(&p.rewrite_result(context, nested_shape.sub_width(1, p.span)?)?);
-                result.push_str("}");
-            }
-            Html::Comment(str_lit) => {
-                result.push_str(&indent.to_string_with_newline(context.config));
-                result.push_str("<!--\"");
-                result.push_str(str_lit.symbol.as_str());
-                result.push_str("\"-->")
-            }
-            Html::Open { tag, attrs } => {
-                result.push_str(&indent.to_string_with_newline(context.config));
-                result.push_str("<");
-                result.push_str(tag.as_str());
-                for (base_ident, rest_ident, value) in attrs {
-                    result.push_str(" ");
-                    result.push_str(base_ident.as_str());
-                    result.push_str(
-                        &rest_ident
-                            .iter()
-                            .map(|(delimiter, ident)| {
-                                match delimiter {
-                                    TokenKind::Colon => ":",
-                                    TokenKind::BinOp(BinOpToken::Minus) => "-",
-                                    _ => panic!(),
-                                }
-                                .to_owned()
-                                    + ident.as_str()
-                            })
-                            .join(""),
-                    );
-                    result.push_str("=");
-                    match &value {
-                        HtmlAttributeValue::Expr(p) => {
-                            result.push_str("{");
-                            result.push_str(&p.rewrite_result(
-                                context,
-                                Shape::indented(indent, context.config).sub_width(1, p.span)?,
-                            )?);
-                            result.push_str("}");
-                        }
-                        HtmlAttributeValue::Literal(str_lit) => {
-                            result.push_str("\"");
-                            result.push_str(str_lit.symbol.as_str());
-                            result.push_str("\"");
-                        }
-                        HtmlAttributeValue::Ident(ident) => result.push_str(ident.as_str()),
-                    }
-                }
-                result.push_str(">");
-                indent = indent.block_indent(context.config);
-            }
-            Html::Close { tag } => {
-                indent = indent.block_unindent(context.config);
-                if ![
-                    "area", "base", "br", "col", "command", "embed", "hr", "img", "input",
-                    "keygen", "link", "meta", "param", "source", "track", "wbr",
-                ]
-                .contains(&tag.as_str())
-                {
-                    result.push_str(&indent.to_string_with_newline(context.config));
-                }
-                result.push_str("</");
-                result.push_str(tag.as_str());
-                result.push_str(">");
-            }
-            Html::If {
-                conditional,
-                body,
-                variable,
-                result_expr,
-            } => {
-                result.push_str("if");
-            }
-        }
+        format_html_inner(context, shape, indent, &mut result, html)?;
     }
 
     result.push_str(&shape.indent.to_string_with_newline(context.config));
