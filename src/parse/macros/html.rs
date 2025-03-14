@@ -54,15 +54,18 @@ pub(crate) fn parse_single_html(
         token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "if" => {
             eprintln!("got an if");
             assert!(parser.eat_keyword(exp!(If)));
-            // This eats too much
-            // we could in theory try to parse matching braces/parens and then extract based on that?
             let expr = match parser.parse_expr_cond() {
                 Ok(expr) => expr,
                 Err(error) => {
                     panic!("{:?} {:?}", error, parser.parse_tokens());
                 }
             };
-            assert!(parser.eat(exp!(OpenBrace)), "{:?} {:?}", parser.token.kind, expr.span);
+            assert!(
+                parser.eat(exp!(OpenBrace)),
+                "{:?} {:?}",
+                parser.token.kind,
+                expr.span
+            );
             let mut htmls = Vec::new();
             while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
                 if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
