@@ -75,8 +75,7 @@ pub(crate) fn parse_single_html(
                 }
             }
             assert!(parser.eat(exp!(CloseBrace)));
-            assert!(parser.eat(exp!(Eq)));
-            assert!(parser.eat(exp!(Gt)));
+            assert!(parser.eat(exp!(FatArrow)));
             let ident = parser.token.ident().unwrap().0;
             parser.bump();
             assert!(parser.eat(exp!(Eq)));
