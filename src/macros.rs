@@ -1586,6 +1586,35 @@ fn format_html_inner(
                 Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
             )?);
             result.push_str(";");
+        },
+        Html::While {
+            conditional,
+            body,
+            variable,
+            result_expr,
+        } => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("if ");
+            result.push_str(&conditional.rewrite_result(
+                context,
+                Shape::indented(*indent, context.config).sub_width(1, conditional.span)?,
+            )?);
+            result.push_str(" {");
+            *indent = indent.block_indent(context.config);
+            for elem in body {
+                format_html_inner(context, shape, indent, result, elem)?;
+            }
+            *indent = indent.block_unindent(context.config);
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("} ");
+            result.push_str("=> ");
+            result.push_str(variable.as_str());
+            result.push_str(" = ");
+            result.push_str(&result_expr.rewrite_result(
+                context,
+                Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
+            )?);
+            result.push_str(";");
         }
     }
     Ok(result.to_string())
@@ -1615,6 +1644,12 @@ fn format_html(
             Html::Open { tag, attrs } => -1,
             Html::Close { tag } => 1,
             Html::If {
+                conditional,
+                body,
+                variable,
+                result_expr,
+            } => 0,
+            Html::While {
                 conditional,
                 body,
                 variable,
