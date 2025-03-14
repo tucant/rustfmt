@@ -1594,7 +1594,7 @@ fn format_html_inner(
             result_expr,
         } => {
             result.push_str(&indent.to_string_with_newline(context.config));
-            result.push_str("if ");
+            result.push_str("while ");
             result.push_str(&conditional.rewrite_result(
                 context,
                 Shape::indented(*indent, context.config).sub_width(1, conditional.span)?,
