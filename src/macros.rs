@@ -1581,6 +1581,7 @@ fn format_html_inner(
             body,
             variable,
             result_expr,
+            else_,
         } => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("let ");
@@ -1605,6 +1606,22 @@ fn format_html_inner(
                 Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
             )?);
             result.push_str(";");
+            if let Some(else_) = else_ {
+                result.push_str(" else {");
+                *indent = indent.block_indent(context.config);
+                for elem in body {
+                    format_html_inner(context, shape, indent, result, elem)?;
+                }
+                *indent = indent.block_unindent(context.config);
+                result.push_str(&indent.to_string_with_newline(context.config));
+                result.push_str("} ");
+                result.push_str("=> ");
+                result.push_str(&result_expr.rewrite_result(
+                    context,
+                    Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
+                )?);
+                result.push_str(";");
+            }
         }
         Html::While {
             conditional,
@@ -1670,6 +1687,7 @@ fn format_html(
                 body,
                 variable,
                 result_expr,
+                else_,
             } => 0,
             Html::While {
                 conditional,

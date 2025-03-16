@@ -34,6 +34,7 @@ pub(crate) enum Html {
         body: Vec<Html>,
         variable: Ident,
         result_expr: P<Expr>,
+        else_: Option<(Vec<Html>, P<Expr>)>,
     },
     While {
         conditional: P<Expr>,
@@ -92,11 +93,39 @@ pub(crate) fn parse_single_html(
                         }
                     };
                     assert!(parser.eat(exp!(Semi)));
+
+                    let else_ = if parser.eat_keyword(exp!(Else)) {
+                        assert!(parser.eat(exp!(OpenBrace)));
+                        let mut body = Vec::new();
+                        while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
+                            if let Some(some_htmls) = parse_single_html(context, ts_string, parser)
+                            {
+                                body.extend(some_htmls);
+                            } else {
+                                panic!();
+                            }
+                        }
+                        assert!(parser.eat(exp!(CloseBrace)));
+                        assert!(parser.eat(exp!(FatArrow)));
+
+                        let result_expr = match parser.parse_expr() {
+                            Ok(expr) => expr,
+                            Err(error) => {
+                                panic!("{:?} {:?}", error, parser.parse_tokens());
+                            }
+                        };
+                        assert!(parser.eat(exp!(Semi)));
+                        Some((body, result_expr))
+                    } else {
+                        None
+                    };
+
                     result.push(Html::If {
                         conditional,
                         body,
                         variable,
                         result_expr,
+                        else_,
                     })
                 }
                 token_kind @ TokenKind::Ident(symbol, ident_is_raw)
