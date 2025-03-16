@@ -1,9 +1,9 @@
 use crate::rewrite::RewriteContext;
 use rustc_ast::ptr::P;
+use rustc_ast::token::Delimiter;
 use rustc_ast::token::TokenKind;
 use rustc_ast::tokenstream::TokenStream;
 use rustc_ast::{Expr, StrLit};
-use rustc_ast::token::Delimiter;
 use rustc_parse::exp;
 use rustc_parse::parser::Parser;
 use rustc_span::symbol::Ident;
@@ -124,9 +124,7 @@ pub(crate) fn parse_single_html(
                         else_,
                     })
                 }
-                TokenKind::Ident(symbol, _)
-                    if symbol.as_str() == "while" =>
-                {
+                TokenKind::Ident(symbol, _) if symbol.as_str() == "while" => {
                     assert!(parser.eat_keyword(exp!(While)));
                     let conditional = match parser.parse_expr_cond() {
                         Ok(expr) => expr,
