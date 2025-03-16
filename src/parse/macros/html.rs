@@ -1,7 +1,7 @@
 use crate::rewrite::RewriteContext;
 use rustc_ast::ptr::P;
 use rustc_ast::token;
-use rustc_ast::token::{BinOpToken, Lit, TokenKind};
+use rustc_ast::token::{Lit, TokenKind};
 use rustc_ast::tokenstream::TokenStream;
 use rustc_ast::{Expr, StrLit};
 use rustc_ast::{ast, token::Delimiter};
@@ -160,7 +160,7 @@ pub(crate) fn parse_single_html(
             //eprintln!("parsing lt");
             parse_eat!(exp!(Lt));
             match parser.token.kind {
-                TokenKind::BinOp(BinOpToken::Slash) => {
+                TokenKind::Slash => {
                     //eprintln!("parsing slash");
                     parser.bump();
                     //eprintln!("parsing ident");
@@ -170,9 +170,9 @@ pub(crate) fn parse_single_html(
                     parse_eat!(exp!(Gt));
                     result.push(Html::Close { tag: id });
                 }
-                TokenKind::Not => {
+                TokenKind::Bang => {
                     //eprintln!("parsing not");
-                    parse_eat!(exp!(Not));
+                    parse_eat!(exp!(Bang));
                     parse_eat!(exp!(Minus));
                     parse_eat!(exp!(Minus));
                     let Ok(comment) = parser.parse_str_lit() else {
@@ -195,7 +195,7 @@ pub(crate) fn parse_single_html(
                         let mut rest_id = Vec::new();
                         // also minus?
                         while parser.token.kind == TokenKind::Colon
-                            || parser.token.kind == TokenKind::BinOp(BinOpToken::Minus)
+                            || parser.token.kind == TokenKind::Minus
                         {
                             let delimiter = parser.token.kind.clone();
                             parser.bump();

@@ -1533,7 +1533,7 @@ fn format_html_inner(
                         .map(|(delimiter, ident)| {
                             match delimiter {
                                 TokenKind::Colon => ":",
-                                TokenKind::BinOp(BinOpToken::Minus) => "-",
+                                TokenKind::Minus => "-",
                                 _ => panic!(),
                             }
                             .to_owned()
@@ -1604,7 +1604,7 @@ fn format_html_inner(
                 Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
             )?);
             result.push_str(";");
-        },
+        }
         Html::While {
             conditional,
             body,
