@@ -57,79 +57,86 @@ pub(crate) fn parse_single_html(
     }
     let mut result = vec![];
     match &parser.token.kind {
-        token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "if" => {
-            eprintln!("got an if");
-            assert!(parser.eat_keyword(exp!(If)));
-            let conditional = match parser.parse_expr_cond() {
-                Ok(expr) => expr,
-                Err(error) => {
-                    panic!("{:?} {:?}", error, parser.parse_tokens());
-                }
-            };
-            assert!(parser.eat(exp!(OpenBrace)));
-            let mut body = Vec::new();
-            while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
-                if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
-                    body.extend(some_htmls);
-                } else {
-                    panic!();
-                }
-            }
-            assert!(parser.eat(exp!(CloseBrace)));
-            assert!(parser.eat(exp!(FatArrow)));
+        token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "let" => {
+            assert!(parser.eat_keyword(exp!(Let)));
             let variable = parser.token.ident().unwrap().0;
             parser.bump();
             assert!(parser.eat(exp!(Eq)));
-            let result_expr = match parser.parse_expr() {
-                Ok(expr) => expr,
-                Err(error) => {
-                    panic!("{:?} {:?}", error, parser.parse_tokens());
+
+            match &parser.token.kind {
+                token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "if" => {
+                    eprintln!("got an if");
+                    assert!(parser.eat_keyword(exp!(If)));
+                    let conditional = match parser.parse_expr_cond() {
+                        Ok(expr) => expr,
+                        Err(error) => {
+                            panic!("{:?} {:?}", error, parser.parse_tokens());
+                        }
+                    };
+                    assert!(parser.eat(exp!(OpenBrace)));
+                    let mut body = Vec::new();
+                    while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
+                        if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
+                            body.extend(some_htmls);
+                        } else {
+                            panic!();
+                        }
+                    }
+                    assert!(parser.eat(exp!(CloseBrace)));
+                    assert!(parser.eat(exp!(FatArrow)));
+
+                    let result_expr = match parser.parse_expr() {
+                        Ok(expr) => expr,
+                        Err(error) => {
+                            panic!("{:?} {:?}", error, parser.parse_tokens());
+                        }
+                    };
+                    assert!(parser.eat(exp!(Semi)));
+                    result.push(Html::If {
+                        conditional,
+                        body,
+                        variable,
+                        result_expr,
+                    })
                 }
-            };
-            assert!(parser.eat(exp!(Semi)));
-            result.push(Html::If {
-                conditional,
-                body,
-                variable,
-                result_expr,
-            })
-        }
-        token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "while" => {
-            eprintln!("got an while");
-            assert!(parser.eat_keyword(exp!(While)));
-            let conditional = match parser.parse_expr_cond() {
-                Ok(expr) => expr,
-                Err(error) => {
-                    panic!("{:?} {:?}", error, parser.parse_tokens());
+                token_kind @ TokenKind::Ident(symbol, ident_is_raw)
+                    if symbol.as_str() == "while" =>
+                {
+                    eprintln!("got an while");
+                    assert!(parser.eat_keyword(exp!(While)));
+                    let conditional = match parser.parse_expr_cond() {
+                        Ok(expr) => expr,
+                        Err(error) => {
+                            panic!("{:?} {:?}", error, parser.parse_tokens());
+                        }
+                    };
+                    assert!(parser.eat(exp!(OpenBrace)));
+                    let mut body = Vec::new();
+                    while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
+                        if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
+                            body.extend(some_htmls);
+                        } else {
+                            panic!();
+                        }
+                    }
+                    assert!(parser.eat(exp!(CloseBrace)));
+                    assert!(parser.eat(exp!(FatArrow)));
+                    let result_expr = match parser.parse_expr() {
+                        Ok(expr) => expr,
+                        Err(error) => {
+                            panic!("{:?} {:?}", error, parser.parse_tokens());
+                        }
+                    };
+                    assert!(parser.eat(exp!(Semi)));
+                    result.push(Html::While {
+                        conditional,
+                        body,
+                        variable,
+                        result_expr,
+                    })
                 }
-            };
-            assert!(parser.eat(exp!(OpenBrace)));
-            let mut body = Vec::new();
-            while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
-                if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
-                    body.extend(some_htmls);
-                } else {
-                    panic!();
-                }
+                _ => panic!(),
             }
-            assert!(parser.eat(exp!(CloseBrace)));
-            assert!(parser.eat(exp!(FatArrow)));
-            let variable = parser.token.ident().unwrap().0;
-            parser.bump();
-            assert!(parser.eat(exp!(Eq)));
-            let result_expr = match parser.parse_expr() {
-                Ok(expr) => expr,
-                Err(error) => {
-                    panic!("{:?} {:?}", error, parser.parse_tokens());
-                }
-            };
-            assert!(parser.eat(exp!(Semi)));
-            result.push(Html::While {
-                conditional,
-                body,
-                variable,
-                result_expr,
-            })
         }
         TokenKind::OpenDelim(Delimiter::Brace) => {
             //eprintln!("parsing inner expr");

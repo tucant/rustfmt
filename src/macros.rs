@@ -1583,6 +1583,9 @@ fn format_html_inner(
             result_expr,
         } => {
             result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("let ");
+            result.push_str(variable.as_str());
+            result.push_str(" = ");
             result.push_str("if ");
             result.push_str(&conditional.rewrite_result(
                 context,
@@ -1597,8 +1600,6 @@ fn format_html_inner(
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("} ");
             result.push_str("=> ");
-            result.push_str(variable.as_str());
-            result.push_str(" = ");
             result.push_str(&result_expr.rewrite_result(
                 context,
                 Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
@@ -1612,6 +1613,9 @@ fn format_html_inner(
             result_expr,
         } => {
             result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("let ");
+            result.push_str(variable.as_str());
+            result.push_str(" = ");
             result.push_str("while ");
             result.push_str(&conditional.rewrite_result(
                 context,
