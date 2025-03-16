@@ -12,7 +12,8 @@
 use std::collections::HashMap;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
-use rustc_ast::token::{BinOpToken, Delimiter, Token, TokenKind};
+use itertools::Itertools;
+use rustc_ast::token::{Delimiter, Token, TokenKind};
 use rustc_ast::tokenstream::{TokenStream, TokenStreamIter, TokenTree};
 use rustc_ast::{ast, ptr};
 use rustc_ast_pretty::pprust;
@@ -20,7 +21,7 @@ use rustc_span::{
     BytePos, DUMMY_SP, Span, Symbol,
     symbol::{self, kw},
 };
-use tracing::debug;
+use tracing::{debug, warn};
 
 use crate::comment::{
     CharClasses, FindUncommented, FullCodeCharKind, LineClasses, contains_comment,
@@ -30,6 +31,7 @@ use crate::config::lists::*;
 use crate::expr::{RhsAssignKind, rewrite_array, rewrite_assign_rhs};
 use crate::lists::{ListFormatting, itemize_list, write_list};
 use crate::overflow;
+use crate::parse::macros::html::{Html, HtmlAttributeValue, parse_html};
 use crate::parse::macros::lazy_static::parse_lazy_static;
 use crate::parse::macros::{ParsedMacroArgs, parse_expr, parse_macro_args};
 use crate::rewrite::{
@@ -257,6 +259,15 @@ fn rewrite_macro_inner(
                 // If formatting fails even though parsing succeeds, return the err early
                 _ => return Err(err),
             },
+        }
+    }
+    if macro_name == "html_extractor::html!" {
+        match format_html(context, shape, ts.clone(), mac.span()) {
+            Ok(rw) => return Ok(rw),
+            Err(err) => {
+                warn!("{} {}", err, context.snippet(mac.span()));
+                return Err(err);
+            }
         }
     }
 
@@ -839,7 +850,7 @@ impl MacroArgParser {
             match tok {
                 TokenTree::Token(
                     Token {
-                        kind: TokenKind::BinOp(BinOpToken::Plus),
+                        kind: TokenKind::Plus,
                         ..
                     },
                     _,
@@ -853,7 +864,7 @@ impl MacroArgParser {
                 )
                 | TokenTree::Token(
                     Token {
-                        kind: TokenKind::BinOp(BinOpToken::Star),
+                        kind: TokenKind::Star,
                         ..
                     },
                     _,
@@ -1086,14 +1097,32 @@ fn force_space_before(tok: &TokenKind) -> bool {
         | TokenKind::Gt
         | TokenKind::AndAnd
         | TokenKind::OrOr
-        | TokenKind::Not
+        | TokenKind::Bang
         | TokenKind::Tilde
-        | TokenKind::BinOpEq(_)
+        | TokenKind::PlusEq
+        | TokenKind::MinusEq
+        | TokenKind::StarEq
+        | TokenKind::SlashEq
+        | TokenKind::PercentEq
+        | TokenKind::CaretEq
+        | TokenKind::AndEq
+        | TokenKind::OrEq
+        | TokenKind::ShlEq
+        | TokenKind::ShrEq
         | TokenKind::At
         | TokenKind::RArrow
         | TokenKind::LArrow
         | TokenKind::FatArrow
-        | TokenKind::BinOp(_)
+        | TokenKind::Plus
+        | TokenKind::Minus
+        | TokenKind::Star
+        | TokenKind::Slash
+        | TokenKind::Percent
+        | TokenKind::Caret
+        | TokenKind::And
+        | TokenKind::Or
+        | TokenKind::Shl
+        | TokenKind::Shr
         | TokenKind::Pound
         | TokenKind::Dollar => true,
         _ => false,
@@ -1111,8 +1140,8 @@ fn next_space(tok: &TokenKind) -> SpaceState {
     debug!("next_space: {:?}", tok);
 
     match tok {
-        TokenKind::Not
-        | TokenKind::BinOp(BinOpToken::And)
+        TokenKind::Bang
+        | TokenKind::And
         | TokenKind::Tilde
         | TokenKind::At
         | TokenKind::Comma
@@ -1447,6 +1476,232 @@ fn format_lazy_static(
         if i != last {
             result.push_str(&nested_shape.indent.to_string_with_newline(context.config));
         }
+    }
+
+    result.push_str(&shape.indent.to_string_with_newline(context.config));
+    result.push('}');
+
+    Ok(result)
+}
+
+fn format_html_inner(
+    context: &RewriteContext<'_>,
+    shape: Shape,
+    indent: &mut Indent,
+    result: &mut String,
+    html: &Html,
+) -> RewriteResult {
+    let nested_shape = shape
+        .block_indent(context.config.tab_spaces())
+        .with_max_width(context.config);
+
+    match html {
+        Html::Literal(literal) => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("\"");
+            result.push_str(literal.symbol.as_str());
+            result.push_str("\"");
+        }
+        Html::Ident(ident) => {
+            if ident.as_str() != "_" {
+                result.push_str(&indent.to_string_with_newline(context.config));
+            }
+            result.push_str(ident.as_str());
+        }
+        Html::Expr(p) => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("{");
+            result.push_str(&p.rewrite_result(context, nested_shape.sub_width(1, p.span)?)?);
+            result.push_str("}");
+        }
+        Html::Comment(str_lit) => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("<!--\"");
+            result.push_str(str_lit.symbol.as_str());
+            result.push_str("\"-->")
+        }
+        Html::Open { tag, attrs } => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("<");
+            result.push_str(tag.as_str());
+            for (base_ident, rest_ident, value) in attrs {
+                result.push_str(" ");
+                result.push_str(base_ident.as_str());
+                result.push_str(
+                    &rest_ident
+                        .iter()
+                        .map(|(delimiter, ident)| {
+                            match delimiter {
+                                TokenKind::Colon => ":",
+                                TokenKind::Minus => "-",
+                                _ => panic!(),
+                            }
+                            .to_owned()
+                                + ident.as_str()
+                        })
+                        .join(""),
+                );
+                result.push_str("=");
+                match &value {
+                    HtmlAttributeValue::Expr(p) => {
+                        result.push_str("{");
+                        result.push_str(&p.rewrite_result(
+                            context,
+                            Shape::indented(*indent, context.config).sub_width(1, p.span)?,
+                        )?);
+                        result.push_str("}");
+                    }
+                    HtmlAttributeValue::Literal(str_lit) => {
+                        result.push_str("\"");
+                        result.push_str(str_lit.symbol.as_str());
+                        result.push_str("\"");
+                    }
+                    HtmlAttributeValue::Ident(ident) => result.push_str(ident.as_str()),
+                }
+            }
+            result.push_str(">");
+            *indent = indent.block_indent(context.config);
+        }
+        Html::Close { tag } => {
+            *indent = indent.block_unindent(context.config);
+            if ![
+                "area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen",
+                "link", "meta", "param", "source", "track", "wbr",
+            ]
+            .contains(&tag.as_str())
+            {
+                result.push_str(&indent.to_string_with_newline(context.config));
+            }
+            result.push_str("</");
+            result.push_str(tag.as_str());
+            result.push_str(">");
+        }
+        Html::If {
+            conditional,
+            body,
+            variable,
+            result_expr,
+            else_,
+        } => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("let ");
+            result.push_str(variable.as_str());
+            result.push_str(" = ");
+            result.push_str("if ");
+            result.push_str(&conditional.rewrite_result(
+                context,
+                Shape::indented(*indent, context.config).sub_width(1, conditional.span)?,
+            )?);
+            result.push_str(" {");
+            *indent = indent.block_indent(context.config);
+            for elem in body {
+                format_html_inner(context, shape, indent, result, elem)?;
+            }
+            *indent = indent.block_unindent(context.config);
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("} ");
+            result.push_str("=> ");
+            result.push_str(&result_expr.rewrite_result(
+                context,
+                Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
+            )?);
+            result.push_str(";");
+            if let Some((body, result_expr)) = else_ {
+                result.push_str(" else {");
+                *indent = indent.block_indent(context.config);
+                for elem in body {
+                    format_html_inner(context, shape, indent, result, elem)?;
+                }
+                *indent = indent.block_unindent(context.config);
+                result.push_str(&indent.to_string_with_newline(context.config));
+                result.push_str("} => ");
+                result.push_str(&result_expr.rewrite_result(
+                    context,
+                    Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
+                )?);
+                result.push_str(";");
+            }
+        }
+        Html::While {
+            conditional,
+            body,
+            variable,
+            result_expr,
+        } => {
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("let ");
+            result.push_str(variable.as_str());
+            result.push_str(" = ");
+            result.push_str("while ");
+            result.push_str(&conditional.rewrite_result(
+                context,
+                Shape::indented(*indent, context.config).sub_width(1, conditional.span)?,
+            )?);
+            result.push_str(" {");
+            *indent = indent.block_indent(context.config);
+            for elem in body {
+                format_html_inner(context, shape, indent, result, elem)?;
+            }
+            *indent = indent.block_unindent(context.config);
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("} => ");
+            result.push_str(&result_expr.rewrite_result(
+                context,
+                Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
+            )?);
+            result.push_str(";");
+        }
+    }
+    Ok(result.to_string())
+}
+
+fn format_html(
+    context: &RewriteContext<'_>,
+    shape: Shape,
+    ts: TokenStream,
+    span: Span,
+) -> RewriteResult {
+    let mut result = String::with_capacity(1024);
+
+    result.push_str("html_extractor::html! {");
+
+    let parsed_elems = parse_html(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
+
+    let mut min_indent = 0;
+    let mut indent = 0;
+
+    for elem in parsed_elems.iter() {
+        indent += match elem {
+            Html::Expr(_) => 0,
+            Html::Literal(_) => 0,
+            Html::Ident(_) => 0,
+            Html::Comment(_) => 0,
+            Html::Open { tag: _, attrs: _ } => -1,
+            Html::Close { tag: _ } => 1,
+            Html::If {
+                conditional: _,
+                body: _,
+                variable: _,
+                result_expr: _,
+                else_: _,
+            } => 0,
+            Html::While {
+                conditional: _,
+                body: _,
+                variable: _,
+                result_expr: _,
+            } => 0,
+        };
+        min_indent = std::cmp::max(min_indent, indent);
+    }
+
+    let mut indent = shape.indent.block_indent(context.config);
+    for _ in 0..min_indent {
+        indent = indent.block_indent(context.config);
+    }
+
+    for (_, html) in parsed_elems.iter().enumerate() {
+        format_html_inner(context, shape, &mut indent, &mut result, html)?;
     }
 
     result.push_str(&shape.indent.to_string_with_newline(context.config));
