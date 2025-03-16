@@ -1,15 +1,12 @@
 use crate::rewrite::RewriteContext;
 use rustc_ast::ptr::P;
-use rustc_ast::token;
-use rustc_ast::token::{Lit, TokenKind};
+use rustc_ast::token::TokenKind;
 use rustc_ast::tokenstream::TokenStream;
 use rustc_ast::{Expr, StrLit};
-use rustc_ast::{ast, token::Delimiter};
+use rustc_ast::token::Delimiter;
 use rustc_parse::exp;
-use rustc_parse::parser::TokenType;
-use rustc_parse::parser::{ExpTokenPair, Parser};
-use rustc_span::symbol::{self, Ident, kw};
-use tracing::{debug, info, warn};
+use rustc_parse::parser::Parser;
+use rustc_span::symbol::Ident;
 
 pub(crate) enum HtmlAttributeValue {
     Expr(P<Expr>),
@@ -58,15 +55,14 @@ pub(crate) fn parse_single_html(
     }
     let mut result = vec![];
     match &parser.token.kind {
-        token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "let" => {
+        TokenKind::Ident(symbol, _) if symbol.as_str() == "let" => {
             assert!(parser.eat_keyword(exp!(Let)));
             let variable = parser.token.ident().unwrap().0;
             parser.bump();
             assert!(parser.eat(exp!(Eq)));
 
             match &parser.token.kind {
-                token_kind @ TokenKind::Ident(symbol, ident_is_raw) if symbol.as_str() == "if" => {
-                    eprintln!("got an if");
+                TokenKind::Ident(symbol, _) if symbol.as_str() == "if" => {
                     assert!(parser.eat_keyword(exp!(If)));
                     let conditional = match parser.parse_expr_cond() {
                         Ok(expr) => expr,
@@ -128,10 +124,9 @@ pub(crate) fn parse_single_html(
                         else_,
                     })
                 }
-                token_kind @ TokenKind::Ident(symbol, ident_is_raw)
+                TokenKind::Ident(symbol, _)
                     if symbol.as_str() == "while" =>
                 {
-                    eprintln!("got an while");
                     assert!(parser.eat_keyword(exp!(While)));
                     let conditional = match parser.parse_expr_cond() {
                         Ok(expr) => expr,
@@ -185,7 +180,7 @@ pub(crate) fn parse_single_html(
             };
             result.push(Html::Literal(literal))
         }
-        token_kind @ TokenKind::Ident(_, _) => {
+        TokenKind::Ident(_, _) => {
             //eprintln!("parsing ident {:?}", parser.token);
             //let id = parse_or!(parse_ident);
             let ident = parser.token.ident().unwrap().0;
@@ -265,7 +260,7 @@ pub(crate) fn parse_single_html(
                                     HtmlAttributeValue::Literal(literal),
                                 ));
                             }
-                            token_kind @ TokenKind::Ident(_, _) => {
+                            TokenKind::Ident(_, _) => {
                                 //eprintln!("parsing ident {:?}", parser.token);
                                 //let id = parse_or!(parse_ident);
                                 let ident = parser.token.ident().unwrap().0;

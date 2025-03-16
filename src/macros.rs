@@ -21,7 +21,7 @@ use rustc_span::{
     BytePos, DUMMY_SP, Span, Symbol,
     symbol::{self, kw},
 };
-use tracing::{debug, info, warn};
+use tracing::{debug, warn};
 
 use crate::comment::{
     CharClasses, FindUncommented, FullCodeCharKind, LineClasses, contains_comment,
@@ -1606,7 +1606,7 @@ fn format_html_inner(
                 Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
             )?);
             result.push_str(";");
-            if let Some(else_) = else_ {
+            if let Some((body, result_expr)) = else_ {
                 result.push_str(" else {");
                 *indent = indent.block_indent(context.config);
                 for elem in body {
@@ -1676,35 +1676,35 @@ fn format_html(
 
     for elem in parsed_elems.iter() {
         indent += match elem {
-            Html::Expr(p) => 0,
-            Html::Literal(str_lit) => 0,
-            Html::Ident(ident) => 0,
-            Html::Comment(str_lit) => 0,
-            Html::Open { tag, attrs } => -1,
-            Html::Close { tag } => 1,
+            Html::Expr(_) => 0,
+            Html::Literal(_) => 0,
+            Html::Ident(_) => 0,
+            Html::Comment(_) => 0,
+            Html::Open { tag: _, attrs: _ } => -1,
+            Html::Close { tag: _ } => 1,
             Html::If {
-                conditional,
-                body,
-                variable,
-                result_expr,
-                else_,
+                conditional: _,
+                body: _,
+                variable: _,
+                result_expr: _,
+                else_: _,
             } => 0,
             Html::While {
-                conditional,
-                body,
-                variable,
-                result_expr,
+                conditional: _,
+                body: _,
+                variable: _,
+                result_expr: _,
             } => 0,
         };
         min_indent = std::cmp::max(min_indent, indent);
     }
 
     let mut indent = shape.indent.block_indent(context.config);
-    for i in 0..min_indent {
+    for _ in 0..min_indent {
         indent = indent.block_indent(context.config);
     }
 
-    for (i, html) in parsed_elems.iter().enumerate() {
+    for (_, html) in parsed_elems.iter().enumerate() {
         format_html_inner(context, shape, &mut indent, &mut result, html)?;
     }
 
