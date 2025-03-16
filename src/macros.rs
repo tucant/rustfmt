@@ -1614,8 +1614,7 @@ fn format_html_inner(
                 }
                 *indent = indent.block_unindent(context.config);
                 result.push_str(&indent.to_string_with_newline(context.config));
-                result.push_str("} ");
-                result.push_str("=> ");
+                result.push_str("} => ");
                 result.push_str(&result_expr.rewrite_result(
                     context,
                     Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
@@ -1645,10 +1644,7 @@ fn format_html_inner(
             }
             *indent = indent.block_unindent(context.config);
             result.push_str(&indent.to_string_with_newline(context.config));
-            result.push_str("} ");
-            result.push_str("=> ");
-            result.push_str(variable.as_str());
-            result.push_str(" = ");
+            result.push_str("} => ");
             result.push_str(&result_expr.rewrite_result(
                 context,
                 Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
