@@ -1511,7 +1511,15 @@ fn format_html_inner(
         Html::Expr(p) => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("{");
-            result.push_str(&p.rewrite_result(context, nested_shape.sub_width(1, p.span)?)?);
+            result.push_str(
+                &p.rewrite_result(
+                    context,
+                    nested_shape
+                        .sub_width(1, p.span)
+                        .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
+                )
+                .unwrap(),
+            );
             result.push_str("}");
         }
         Html::Comment(str_lit) => {
@@ -1545,10 +1553,15 @@ fn format_html_inner(
                 match &value {
                     HtmlAttributeValue::Expr(p) => {
                         result.push_str("{");
-                        result.push_str(&p.rewrite_result(
-                            context,
-                            Shape::indented(*indent, context.config).sub_width(1, p.span)?,
-                        )?);
+                        result.push_str(
+                            &p.rewrite_result(
+                                context,
+                                Shape::indented(*indent, context.config)
+                                    .sub_width(1, p.span)
+                                    .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
+                            )
+                            .unwrap(),
+                        );
                         result.push_str("}");
                     }
                     HtmlAttributeValue::Literal(str_lit) => {
@@ -1588,37 +1601,55 @@ fn format_html_inner(
             result.push_str(variable.as_str());
             result.push_str(" = ");
             result.push_str("if ");
-            result.push_str(&conditional.rewrite_result(
-                context,
-                Shape::indented(*indent, context.config).sub_width(1, conditional.span)?,
-            )?);
+            result.push_str(
+                &conditional
+                    .rewrite_result(
+                        context,
+                        Shape::indented(*indent, context.config)
+                            .sub_width(1, conditional.span)
+                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
+                    )
+                    .unwrap(),
+            );
             result.push_str(" {");
             *indent = indent.block_indent(context.config);
             for elem in body {
-                format_html_inner(context, shape, indent, result, elem)?;
+                format_html_inner(context, shape, indent, result, elem).unwrap();
             }
             *indent = indent.block_unindent(context.config);
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("} ");
             result.push_str("=> ");
-            result.push_str(&result_expr.rewrite_result(
-                context,
-                Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
-            )?);
+            result.push_str(
+                &result_expr
+                    .rewrite_result(
+                        context,
+                        Shape::indented(*indent, context.config)
+                            .sub_width(1, result_expr.span)
+                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
+                    )
+                    .unwrap(),
+            );
             result.push_str(";");
             if let Some((body, result_expr)) = else_ {
                 result.push_str(" else {");
                 *indent = indent.block_indent(context.config);
                 for elem in body {
-                    format_html_inner(context, shape, indent, result, elem)?;
+                    format_html_inner(context, shape, indent, result, elem).unwrap();
                 }
                 *indent = indent.block_unindent(context.config);
                 result.push_str(&indent.to_string_with_newline(context.config));
                 result.push_str("} => ");
-                result.push_str(&result_expr.rewrite_result(
-                    context,
-                    Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
-                )?);
+                result.push_str(
+                    &result_expr
+                        .rewrite_result(
+                            context,
+                            Shape::indented(*indent, context.config)
+                                .sub_width(1, result_expr.span)
+                                .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
+                        )
+                        .unwrap(),
+                );
                 result.push_str(";");
             }
         }
@@ -1633,22 +1664,34 @@ fn format_html_inner(
             result.push_str(variable.as_str());
             result.push_str(" = ");
             result.push_str("while ");
-            result.push_str(&conditional.rewrite_result(
-                context,
-                Shape::indented(*indent, context.config).sub_width(1, conditional.span)?,
-            )?);
+            result.push_str(
+                &conditional
+                    .rewrite_result(
+                        context,
+                        Shape::indented(*indent, context.config)
+                            .sub_width(1, conditional.span)
+                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
+                    )
+                    .unwrap(),
+            );
             result.push_str(" {");
             *indent = indent.block_indent(context.config);
             for elem in body {
-                format_html_inner(context, shape, indent, result, elem)?;
+                format_html_inner(context, shape, indent, result, elem).unwrap();
             }
             *indent = indent.block_unindent(context.config);
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("} => ");
-            result.push_str(&result_expr.rewrite_result(
-                context,
-                Shape::indented(*indent, context.config).sub_width(1, result_expr.span)?,
-            )?);
+            result.push_str(
+                &result_expr
+                    .rewrite_result(
+                        context,
+                        Shape::indented(*indent, context.config)
+                            .sub_width(1, result_expr.span)
+                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
+                    )
+                    .unwrap(),
+            );
             result.push_str(";");
         }
     }
@@ -1665,7 +1708,7 @@ fn format_html(
 
     result.push_str("html_extractor::html! {");
 
-    let parsed_elems = parse_html(context, ts).macro_error(MacroErrorKind::ParseFailure, span)?;
+    let parsed_elems = parse_html(context, ts).unwrap();
 
     let mut min_indent = 0;
     let mut indent = 0;
@@ -1701,7 +1744,7 @@ fn format_html(
     }
 
     for (_, html) in parsed_elems.iter().enumerate() {
-        format_html_inner(context, shape, &mut indent, &mut result, html)?;
+        format_html_inner(context, shape, &mut indent, &mut result, html).unwrap();
     }
 
     result.push_str(&shape.indent.to_string_with_newline(context.config));
