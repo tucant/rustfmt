@@ -1694,6 +1694,15 @@ fn format_html_inner(
             );
             result.push_str(";");
         }
+        Html::Let { variable, expr } => {
+
+        }
+        Html::Use(expr) => {
+
+        }
+        Html::Extern(block) => {
+
+        }
     }
     Ok(result.to_string())
 }
@@ -1734,6 +1743,9 @@ fn format_html(
                 variable: _,
                 result_expr: _,
             } => 0,
+            Html::Let { variable, expr } => 0,
+            Html::Use(expr) => 0,
+            Html::Extern(block) => 0,
         };
         min_indent = std::cmp::max(min_indent, indent);
     }
