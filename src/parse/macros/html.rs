@@ -3,6 +3,7 @@ use rustc_ast::ptr::P;
 use rustc_ast::token::Delimiter;
 use rustc_ast::token::TokenKind;
 use rustc_ast::tokenstream::TokenStream;
+use rustc_ast::Block;
 use rustc_ast::{Expr, StrLit};
 use rustc_parse::exp;
 use rustc_parse::parser::Parser;
@@ -39,6 +40,12 @@ pub(crate) enum Html {
         variable: Ident,
         result_expr: P<Expr>,
     },
+    Let {
+        variable: Ident,
+        expr: P<Expr>
+    },
+    Use(P<Expr>),
+    Extern(P<Block>)
 }
 
 pub(crate) fn parse_single_html(
@@ -55,6 +62,28 @@ pub(crate) fn parse_single_html(
     }
     let mut result = vec![];
     match &parser.token.kind {
+        TokenKind::Ident(symbol, _) if symbol.as_str() == "use" => {
+            assert!(parser.eat_keyword(exp!(Use)));
+            let expr = match parser.parse_expr() {
+                Ok(expr) => expr,
+                Err(error) => {
+                    panic!("{:?} {:?}", error, parser.parse_tokens());
+                }
+            };
+            assert!(parser.eat(exp!(Semi)));
+            result.push(Html::Use(expr));
+        }
+        TokenKind::Ident(symbol, _) if symbol.as_str() == "extern" => {
+            assert!(parser.eat_keyword(exp!(Extern)));
+            let block = match parser.parse_block() {
+                Ok(block) => block,
+                Err(error) => {
+                    panic!("{:?} {:?}", error, parser.parse_tokens());
+                }
+            };
+            assert!(parser.eat(exp!(Semi)));
+            result.push(Html::Extern(block));
+        }
         TokenKind::Ident(symbol, _) if symbol.as_str() == "let" => {
             assert!(parser.eat_keyword(exp!(Let)));
             let variable = parser.token.ident().unwrap().0;
@@ -157,7 +186,19 @@ pub(crate) fn parse_single_html(
                         result_expr,
                     })
                 }
-                _ => panic!(),
+                _ => {
+                    let expr = match parser.parse_expr() {
+                        Ok(expr) => expr,
+                        Err(error) => {
+                            panic!("{:?} {:?}", error, parser.parse_tokens());
+                        }
+                    };
+                    assert!(parser.eat(exp!(Semi)));
+                    result.push(Html::Let {
+                        variable,
+                        expr,
+                    })
+                }
             }
         }
         TokenKind::OpenDelim(Delimiter::Brace) => {
