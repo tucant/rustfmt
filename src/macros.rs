@@ -1613,9 +1613,7 @@ fn format_html_inner(
             );
             result.push_str(" {");
             *indent = indent.block_indent(context.config);
-            for elem in body {
-                format_html_inner(context, shape, indent, result, elem).unwrap();
-            }
+            format_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
             *indent = indent.block_unindent(context.config);
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("} ");
@@ -1634,9 +1632,7 @@ fn format_html_inner(
             if let Some((body, result_expr)) = else_ {
                 result.push_str(" else {");
                 *indent = indent.block_indent(context.config);
-                for elem in body {
-                    format_html_inner(context, shape, indent, result, elem).unwrap();
-                }
+                format_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
                 *indent = indent.block_unindent(context.config);
                 result.push_str(&indent.to_string_with_newline(context.config));
                 result.push_str("} => ");
@@ -1676,9 +1672,7 @@ fn format_html_inner(
             );
             result.push_str(" {");
             *indent = indent.block_indent(context.config);
-            for elem in body {
-                format_html_inner(context, shape, indent, result, elem).unwrap();
-            }
+            format_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
             *indent = indent.block_unindent(context.config);
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("} => ");
@@ -1744,22 +1738,17 @@ fn format_html_inner(
     Ok(result.to_string())
 }
 
-fn format_html(
+fn format_html_vec(
     context: &RewriteContext<'_>,
     shape: Shape,
-    ts: TokenStream,
-    span: Span,
+    indent: &mut Indent,
+    mut result: &mut String,
+    elems: &Vec<Html>,
 ) -> RewriteResult {
-    let mut result = String::with_capacity(1024);
-
-    result.push_str("html_extractor::html! {");
-
-    let parsed_elems = parse_html(context, ts).unwrap();
-
     let mut min_indent = 0;
     let mut indent = 0;
 
-    for elem in parsed_elems.iter() {
+    for elem in elems.iter() {
         indent += match elem {
             Html::Expr(_) => 0,
             Html::Literal(_) => 0,
@@ -1792,9 +1781,26 @@ fn format_html(
         indent = indent.block_indent(context.config);
     }
 
-    for (_, html) in parsed_elems.iter().enumerate() {
-        format_html_inner(context, shape, &mut indent, &mut result, html).unwrap();
+    for html in elems {
+        format_html_inner(context, shape, &mut indent, result, html).unwrap();
     }
+
+    Ok(result.clone())
+}
+
+fn format_html(
+    context: &RewriteContext<'_>,
+    shape: Shape,
+    ts: TokenStream,
+    span: Span,
+) -> RewriteResult {
+    let mut result = String::new();
+
+    result.push_str("html_extractor::html! {");
+
+    let parsed_elems = parse_html(context, ts).unwrap();
+    let mut indent = shape.indent.clone();
+    format_html_vec(context, shape, &mut indent, &mut result, &parsed_elems)?;
 
     result.push_str(&shape.indent.to_string_with_newline(context.config));
     result.push('}');
