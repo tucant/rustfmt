@@ -1746,10 +1746,10 @@ fn format_html_vec(
     elems: &Vec<Html>,
 ) -> RewriteResult {
     let mut min_indent = 0;
-    let mut indent = 0;
+    let mut indent_amount = 0;
 
     for elem in elems.iter() {
-        indent += match elem {
+        indent_amount += match elem {
             Html::Expr(_) => 0,
             Html::Literal(_) => 0,
             Html::Ident(_) => 0,
@@ -1773,16 +1773,15 @@ fn format_html_vec(
             Html::Use(expr) => 0,
             Html::Extern(block) => 0,
         };
-        min_indent = std::cmp::max(min_indent, indent);
+        min_indent = std::cmp::max(min_indent, indent_amount);
     }
 
-    let mut indent = shape.indent.block_indent(context.config);
     for _ in 0..min_indent {
-        indent = indent.block_indent(context.config);
+        *indent = indent.block_indent(context.config);
     }
 
     for html in elems {
-        format_html_inner(context, shape, &mut indent, result, html).unwrap();
+        format_html_inner(context, shape, indent, result, html).unwrap();
     }
 
     Ok(result.clone())
@@ -1799,7 +1798,7 @@ fn format_html(
     result.push_str("html_extractor::html! {");
 
     let parsed_elems = parse_html(context, ts).unwrap();
-    let mut indent = shape.indent.clone();
+    let mut indent = shape.indent.block_indent(context.config);
     format_html_vec(context, shape, &mut indent, &mut result, &parsed_elems)?;
 
     result.push_str(&shape.indent.to_string_with_newline(context.config));
