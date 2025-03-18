@@ -1,9 +1,9 @@
 use crate::rewrite::RewriteContext;
+use rustc_ast::Block;
 use rustc_ast::ptr::P;
 use rustc_ast::token::Delimiter;
 use rustc_ast::token::TokenKind;
 use rustc_ast::tokenstream::TokenStream;
-use rustc_ast::Block;
 use rustc_ast::{Expr, StrLit};
 use rustc_parse::exp;
 use rustc_parse::parser::Parser;
@@ -42,10 +42,10 @@ pub(crate) enum Html {
     },
     Let {
         variable: Ident,
-        expr: P<Expr>
+        expr: P<Expr>,
     },
     Use(P<Expr>),
-    Extern(P<Block>)
+    Extern(P<Block>),
 }
 
 pub(crate) fn parse_single_html(
@@ -81,7 +81,6 @@ pub(crate) fn parse_single_html(
                     panic!("{:?} {:?}", error, parser.parse_tokens());
                 }
             };
-            assert!(parser.eat(exp!(Semi)));
             result.push(Html::Extern(block));
         }
         TokenKind::Ident(symbol, _) if symbol.as_str() == "let" => {
@@ -194,10 +193,7 @@ pub(crate) fn parse_single_html(
                         }
                     };
                     assert!(parser.eat(exp!(Semi)));
-                    result.push(Html::Let {
-                        variable,
-                        expr,
-                    })
+                    result.push(Html::Let { variable, expr })
                 }
             }
         }

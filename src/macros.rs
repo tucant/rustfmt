@@ -1695,13 +1695,50 @@ fn format_html_inner(
             result.push_str(";");
         }
         Html::Let { variable, expr } => {
-
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("let ");
+            result.push_str(variable.as_str());
+            result.push_str(" = ");
+            result.push_str(
+                &expr
+                    .rewrite_result(
+                        context,
+                        Shape::indented(*indent, context.config)
+                            .sub_width(1, expr.span)
+                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
+                    )
+                    .unwrap(),
+            );
+            result.push_str(";");
         }
         Html::Use(expr) => {
-
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("use ");
+            result.push_str(
+                &expr
+                    .rewrite_result(
+                        context,
+                        Shape::indented(*indent, context.config)
+                            .sub_width(1, expr.span)
+                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
+                    )
+                    .unwrap(),
+            );
+            result.push_str(";");
         }
         Html::Extern(block) => {
-
+            result.push_str(&indent.to_string_with_newline(context.config));
+            result.push_str("extern ");
+            result.push_str(
+                &block
+                    .rewrite_result(
+                        context,
+                        Shape::indented(*indent, context.config)
+                            .sub_width(1, block.span)
+                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
+                    )
+                    .unwrap(),
+            );
         }
     }
     Ok(result.to_string())
