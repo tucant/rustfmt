@@ -1613,7 +1613,8 @@ fn format_html_inner(
             );
             result.push_str(" {");
             *indent = indent.block_indent(context.config);
-            format_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
+            let indent_after = &mut indent.clone();
+            format_html_vec(context, shape, indent_after, result, body).unwrap();
             *indent = indent.block_unindent(context.config);
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("} ");
@@ -1648,6 +1649,8 @@ fn format_html_inner(
                 );
                 result.push_str(";");
             }
+            *indent = *indent_after;
+            *indent = indent.block_unindent(context.config);
         }
         Html::While {
             conditional,
@@ -1782,6 +1785,10 @@ fn format_html_vec(
 
     for html in elems {
         format_html_inner(context, shape, indent, result, html).unwrap();
+    }
+
+    for _ in 0..min_indent {
+        *indent = indent.block_unindent(context.config);
     }
 
     Ok(result.clone())
