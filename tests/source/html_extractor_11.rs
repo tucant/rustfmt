@@ -6,7 +6,7 @@ let value = if html_handler.test() {
                   } 
                   =>
 
-                    value; else {
+                    value else {
                         <div></div>
                     } => value;
         <div></div>

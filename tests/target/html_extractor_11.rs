@@ -5,7 +5,7 @@ pub fn main() {
         let value = if html_handler.test() {
             <div>
             </div>
-        } => value; else {
+        } => value else {
             <div>
             </div>
         } => value;

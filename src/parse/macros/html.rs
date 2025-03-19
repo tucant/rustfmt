@@ -116,7 +116,6 @@ pub(crate) fn parse_single_html(
                             panic!("{:?} {:?}", error, parser.parse_tokens());
                         }
                     };
-                    assert!(parser.eat(exp!(Semi)));
 
                     let else_ = if parser.eat_keyword(exp!(Else)) {
                         assert!(parser.eat(exp!(OpenBrace)));
@@ -138,11 +137,11 @@ pub(crate) fn parse_single_html(
                                 panic!("{:?} {:?}", error, parser.parse_tokens());
                             }
                         };
-                        assert!(parser.eat(exp!(Semi)));
                         Some((body, result_expr))
                     } else {
                         None
                     };
+                    assert!(parser.eat(exp!(Semi)));
 
                     result.push(Html::If {
                         conditional,

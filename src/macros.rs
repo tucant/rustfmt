@@ -1629,7 +1629,6 @@ fn format_html_inner(
                     )
                     .unwrap(),
             );
-            result.push_str(";");
             if let Some((body, result_expr)) = else_ {
                 result.push_str(" else {");
                 *indent = indent.block_indent(context.config);
@@ -1647,8 +1646,8 @@ fn format_html_inner(
                         )
                         .unwrap(),
                 );
-                result.push_str(";");
             }
+            result.push_str(";");
             *indent = *indent_after;
             *indent = indent.block_unindent(context.config);
         }
