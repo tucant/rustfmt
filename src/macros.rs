@@ -1499,7 +1499,7 @@ fn format_html_inner(
         Html::Literal(literal) => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("\"");
-            result.push_str(literal.symbol.as_str().trim());
+            result.push_str(literal.symbol.as_str().trim_ascii());
             result.push_str("\"");
         }
         Html::Ident(ident) => {
