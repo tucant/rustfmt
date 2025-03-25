@@ -1499,14 +1499,14 @@ fn format_html_inner(
         Html::Literal(literal) => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("\"");
-            result.push_str(literal.symbol.as_str());
+            result.push_str(literal.symbol.as_str().trim());
             result.push_str("\"");
         }
         Html::Ident(ident) => {
             if ident.as_str() != "_" {
                 result.push_str(&indent.to_string_with_newline(context.config));
+                result.push_str(ident.as_str());
             }
-            result.push_str(ident.as_str());
         }
         Html::Expr(p) => {
             result.push_str(&indent.to_string_with_newline(context.config));
@@ -1523,10 +1523,7 @@ fn format_html_inner(
             result.push_str("}");
         }
         Html::Comment(str_lit) => {
-            result.push_str(&indent.to_string_with_newline(context.config));
-            result.push_str("<!--\"");
-            result.push_str(str_lit.symbol.as_str());
-            result.push_str("\"-->")
+            
         }
         Html::Open { tag, attrs } => {
             result.push_str(&indent.to_string_with_newline(context.config));
