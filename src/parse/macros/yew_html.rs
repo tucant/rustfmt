@@ -27,7 +27,6 @@ enum Html {
     Expr(P<Expr>),
     Literal(StrLit),
     Ident(Ident),
-    Comment(StrLit),
     Open {
         tag: Ident,
         attrs: Vec<(Ident, Vec<(TokenKind, Ident)>, HtmlAttributeValue)>,
@@ -38,22 +37,8 @@ enum Html {
     If {
         conditional: P<Expr>,
         body: Vec<Html>,
-        variable: Ident,
-        result_expr: P<Expr>,
-        else_: Option<(Vec<Html>, P<Expr>)>,
+        else_: Option<Vec<Html>>,
     },
-    While {
-        conditional: P<Expr>,
-        body: Vec<Html>,
-        variable: Ident,
-        result_expr: P<Expr>,
-    },
-    Let {
-        variable: Ident,
-        expr: P<Expr>,
-    },
-    Use(P<Expr>),
-    Extern(P<Block>),
 }
 
 fn parse_single_html(
@@ -70,126 +55,47 @@ fn parse_single_html(
     }
     let mut result = vec![];
     match &parser.token.kind {
-        TokenKind::Ident(symbol, _) if symbol.as_str() == "use" => {
-            assert!(parser.eat_keyword(exp!(Use)));
-            let expr = match parser.parse_expr() {
+        TokenKind::Ident(symbol, _) if symbol.as_str() == "if" => {
+            assert!(parser.eat_keyword(exp!(If)));
+            let conditional = match parser.parse_expr_cond() {
                 Ok(expr) => expr,
                 Err(error) => {
                     panic!("{:?} {:?}", error, parser.parse_tokens());
                 }
             };
-            assert!(parser.eat(exp!(Semi)));
-            result.push(Html::Use(expr));
-        }
-        TokenKind::Ident(symbol, _) if symbol.as_str() == "extern" => {
-            assert!(parser.eat_keyword(exp!(Extern)));
-            let block = match parser.parse_block() {
-                Ok(block) => block,
+            assert!(parser.eat(exp!(OpenBrace)));
+            let mut body = Vec::new();
+            while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
+                body.extend(parse_single_html(context, ts_string, parser)?);
+            }
+            assert!(parser.eat(exp!(CloseBrace)));
+            assert!(parser.eat(exp!(FatArrow)));
+
+            let result_expr = match parser.parse_expr() {
+                Ok(expr) => expr,
                 Err(error) => {
                     panic!("{:?} {:?}", error, parser.parse_tokens());
                 }
             };
-            result.push(Html::Extern(block));
-        }
-        TokenKind::Ident(symbol, _) if symbol.as_str() == "let" => {
-            assert!(parser.eat_keyword(exp!(Let)));
-            let variable = parser.token.ident().unwrap().0;
-            parser.bump();
-            assert!(parser.eat(exp!(Eq)));
 
-            match &parser.token.kind {
-                TokenKind::Ident(symbol, _) if symbol.as_str() == "if" => {
-                    assert!(parser.eat_keyword(exp!(If)));
-                    let conditional = match parser.parse_expr_cond() {
-                        Ok(expr) => expr,
-                        Err(error) => {
-                            panic!("{:?} {:?}", error, parser.parse_tokens());
-                        }
-                    };
-                    assert!(parser.eat(exp!(OpenBrace)));
-                    let mut body = Vec::new();
-                    while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
-                        body.extend(parse_single_html(context, ts_string, parser)?);
-                    }
-                    assert!(parser.eat(exp!(CloseBrace)));
-                    assert!(parser.eat(exp!(FatArrow)));
-
-                    let result_expr = match parser.parse_expr() {
-                        Ok(expr) => expr,
-                        Err(error) => {
-                            panic!("{:?} {:?}", error, parser.parse_tokens());
-                        }
-                    };
-
-                    let else_ = if parser.eat_keyword(exp!(Else)) {
-                        assert!(parser.eat(exp!(OpenBrace)));
-                        let mut body = Vec::new();
-                        while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
-                            body.extend(parse_single_html(context, ts_string, parser)?);
-                        }
-                        assert!(parser.eat(exp!(CloseBrace)));
-                        assert!(parser.eat(exp!(FatArrow)));
-
-                        let result_expr = match parser.parse_expr() {
-                            Ok(expr) => expr,
-                            Err(error) => {
-                                panic!("{:?} {:?}", error, parser.parse_tokens());
-                            }
-                        };
-                        Some((body, result_expr))
-                    } else {
-                        None
-                    };
-                    assert!(parser.eat(exp!(Semi)));
-
-                    result.push(Html::If {
-                        conditional,
-                        body,
-                        variable,
-                        result_expr,
-                        else_,
-                    })
+            let else_ = if parser.eat_keyword(exp!(Else)) {
+                assert!(parser.eat(exp!(OpenBrace)));
+                let mut body = Vec::new();
+                while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
+                    body.extend(parse_single_html(context, ts_string, parser)?);
                 }
-                TokenKind::Ident(symbol, _) if symbol.as_str() == "while" => {
-                    assert!(parser.eat_keyword(exp!(While)));
-                    let conditional = match parser.parse_expr_cond() {
-                        Ok(expr) => expr,
-                        Err(error) => {
-                            panic!("{:?} {:?}", error, parser.parse_tokens());
-                        }
-                    };
-                    assert!(parser.eat(exp!(OpenBrace)));
-                    let mut body = Vec::new();
-                    while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
-                        body.extend(parse_single_html(context, ts_string, parser)?);
-                    }
-                    assert!(parser.eat(exp!(CloseBrace)));
-                    assert!(parser.eat(exp!(FatArrow)));
-                    let result_expr = match parser.parse_expr() {
-                        Ok(expr) => expr,
-                        Err(error) => {
-                            panic!("{:?} {:?}", error, parser.parse_tokens());
-                        }
-                    };
-                    assert!(parser.eat(exp!(Semi)));
-                    result.push(Html::While {
-                        conditional,
-                        body,
-                        variable,
-                        result_expr,
-                    })
-                }
-                _ => {
-                    let expr = match parser.parse_expr() {
-                        Ok(expr) => expr,
-                        Err(error) => {
-                            panic!("{:?} {:?}", error, parser.parse_tokens());
-                        }
-                    };
-                    assert!(parser.eat(exp!(Semi)));
-                    result.push(Html::Let { variable, expr })
-                }
-            }
+                assert!(parser.eat(exp!(CloseBrace)));
+                Some(body)
+            } else {
+                None
+            };
+            assert!(parser.eat(exp!(Semi)));
+
+            result.push(Html::If {
+                conditional,
+                body,
+                else_,
+            })
         }
         TokenKind::OpenDelim(Delimiter::Brace) => {
             //eprintln!("parsing inner expr");
@@ -229,18 +135,6 @@ fn parse_single_html(
                     //eprintln!("parsing gt");
                     parse_eat!(exp!(Gt));
                     result.push(Html::Close { tag: id });
-                }
-                TokenKind::Bang => {
-                    //eprintln!("parsing not");
-                    parse_eat!(exp!(Bang));
-                    parse_eat!(exp!(Minus));
-                    parse_eat!(exp!(Minus));
-                    let Ok(comment) = parser.parse_str_lit() else {
-                        panic!();
-                    };
-                    parse_eat!(exp!(Minus));
-                    parse_eat!(exp!(RArrow));
-                    result.push(Html::Comment(comment));
                 }
                 _ => {
                     //eprintln!("parsing ident");
@@ -365,7 +259,6 @@ fn format_yew_html_inner(
             );
             result.push_str("}");
         }
-        Html::Comment(str_lit) => {}
         Html::Open { tag, attrs } => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("<");
@@ -430,14 +323,9 @@ fn format_yew_html_inner(
         Html::If {
             conditional,
             body,
-            variable,
-            result_expr,
             else_,
         } => {
             result.push_str(&indent.to_string_with_newline(context.config));
-            result.push_str("let ");
-            result.push_str(variable.as_str());
-            result.push_str(" = ");
             result.push_str("if ");
             result.push_str(
                 &conditional
@@ -456,123 +344,16 @@ fn format_yew_html_inner(
             *indent = indent.block_unindent(context.config);
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("} ");
-            result.push_str("=> ");
-            result.push_str(
-                &result_expr
-                    .rewrite_result(
-                        context,
-                        Shape::indented(*indent, context.config)
-                            .sub_width(1, result_expr.span)
-                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
-                    )
-                    .unwrap(),
-            );
-            if let Some((body, result_expr)) = else_ {
+            if let Some(body) = else_ {
                 result.push_str(" else {");
                 *indent = indent.block_indent(context.config);
                 format_yew_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
                 *indent = indent.block_unindent(context.config);
                 result.push_str(&indent.to_string_with_newline(context.config));
-                result.push_str("} => ");
-                result.push_str(
-                    &result_expr
-                        .rewrite_result(
-                            context,
-                            Shape::indented(*indent, context.config)
-                                .sub_width(1, result_expr.span)
-                                .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
-                        )
-                        .unwrap(),
-                );
+                result.push_str("}");
             }
-            result.push_str(";");
             *indent = *indent_after;
             *indent = indent.block_unindent(context.config);
-        }
-        Html::While {
-            conditional,
-            body,
-            variable,
-            result_expr,
-        } => {
-            result.push_str(&indent.to_string_with_newline(context.config));
-            result.push_str("let ");
-            result.push_str(variable.as_str());
-            result.push_str(" = ");
-            result.push_str("while ");
-            result.push_str(
-                &conditional
-                    .rewrite_result(
-                        context,
-                        Shape::indented(*indent, context.config)
-                            .sub_width(1, conditional.span)
-                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
-                    )
-                    .unwrap(),
-            );
-            result.push_str(" {");
-            *indent = indent.block_indent(context.config);
-            format_yew_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
-            *indent = indent.block_unindent(context.config);
-            result.push_str(&indent.to_string_with_newline(context.config));
-            result.push_str("} => ");
-            result.push_str(
-                &result_expr
-                    .rewrite_result(
-                        context,
-                        Shape::indented(*indent, context.config)
-                            .sub_width(1, result_expr.span)
-                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
-                    )
-                    .unwrap(),
-            );
-            result.push_str(";");
-        }
-        Html::Let { variable, expr } => {
-            result.push_str(&indent.to_string_with_newline(context.config));
-            result.push_str("let ");
-            result.push_str(variable.as_str());
-            result.push_str(" = ");
-            result.push_str(
-                &expr
-                    .rewrite_result(
-                        context,
-                        Shape::indented(*indent, context.config)
-                            .sub_width(1, expr.span)
-                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
-                    )
-                    .unwrap(),
-            );
-            result.push_str(";");
-        }
-        Html::Use(expr) => {
-            result.push_str(&indent.to_string_with_newline(context.config));
-            result.push_str("use ");
-            result.push_str(
-                &expr
-                    .rewrite_result(
-                        context,
-                        Shape::indented(*indent, context.config)
-                            .sub_width(1, expr.span)
-                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
-                    )
-                    .unwrap(),
-            );
-            result.push_str(";");
-        }
-        Html::Extern(block) => {
-            result.push_str(&indent.to_string_with_newline(context.config));
-            result.push_str("extern ");
-            result.push_str(
-                &block
-                    .rewrite_result(
-                        context,
-                        Shape::indented(*indent, context.config)
-                            .sub_width(1, block.span)
-                            .unwrap_or_else(|_| panic!("Something went horribly wrong!")),
-                    )
-                    .unwrap(),
-            );
         }
     }
     Ok(result.to_string())
@@ -593,25 +374,13 @@ fn format_yew_html_vec(
             Html::Expr(_) => 0,
             Html::Literal(_) => 0,
             Html::Ident(_) => 0,
-            Html::Comment(_) => 0,
             Html::Open { tag: _, attrs: _ } => -1,
             Html::Close { tag: _ } => 1,
             Html::If {
                 conditional: _,
                 body: _,
-                variable: _,
-                result_expr: _,
                 else_: _,
             } => 0,
-            Html::While {
-                conditional: _,
-                body: _,
-                variable: _,
-                result_expr: _,
-            } => 0,
-            Html::Let { variable, expr } => 0,
-            Html::Use(expr) => 0,
-            Html::Extern(block) => 0,
         };
         min_indent = std::cmp::max(min_indent, indent_amount);
     }
@@ -639,7 +408,7 @@ pub(crate) fn format_yew_html(
 ) -> RewriteResult {
     let mut result = String::new();
 
-    result.push_str("html_extractor::html! {");
+    result.push_str("::yew::html! {");
 
     let parsed_elems = parse_html(context, ts)?;
     let mut indent = shape.indent.block_indent(context.config);
