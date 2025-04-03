@@ -962,10 +962,10 @@ mod test {
         let mut options = GetOptsOptions::default();
         let config_file = Some(Path::new("tests/config/style-edition/just-style-edition"));
         options.inline_config =
-            HashMap::from([("overflow_delimited_expr".to_owned(), "false".to_owned())]);
+            HashMap::from([("overflow_delimited_expr".to_owned(), "true".to_owned())]);
         let config = get_config(config_file, Some(options));
         // FIXME: this test doesn't really exercise anything, since
         // `overflow_delimited_expr` is disabled by default in edition 2024.
-        assert_eq!(config.overflow_delimited_expr(), false);
+        assert_eq!(config.overflow_delimited_expr(), true);
     }
 }
