@@ -1,0 +1,13 @@
+// Copyright (c) 2023 Tim Kurdov, licensed under MIT license, source https://github.com/its-the-shrimp/yew-fmt
+use
+yew::prelude::*;
+
+#[function_component]
+fn Comp() -> Html {
+    html!(<div id={
+
+
+        let id = "idk"; id} />);
+    html!(<div id={let id = "one line
+                             another line"; id} />)
+}
