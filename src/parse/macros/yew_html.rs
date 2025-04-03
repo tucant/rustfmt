@@ -46,50 +46,44 @@ fn parse_single_html(
     ts_string: &str,
     parser: &mut Parser<'_>,
 ) -> Result<Vec<Html>, RewriteError> {
-    macro_rules! parse_eat {
-        ($($arg:expr),*) => {
-            if !parser.eat($($arg,)*) {
-                panic!("{:?} {} {}", parser.token, file!(), line!());
+    macro_rules! check {
+        ($arg:expr) => {
+            if !$arg {
+                return Err(RewriteError::MacroFailure { kind: MacroErrorKind::ParseFailure, span: parser.token.span })
             }
         }
     }
     let mut result = vec![];
     match &parser.token.kind {
         TokenKind::Ident(symbol, _) if symbol.as_str() == "if" => {
-            assert!(parser.eat_keyword(exp!(If)));
+            check!(parser.eat_keyword(exp!(If)));
             let conditional = match parser.parse_expr_cond() {
                 Ok(expr) => expr,
                 Err(error) => {
                     panic!("{:?} {:?}", error, parser.parse_tokens());
                 }
             };
-            assert!(parser.eat(exp!(OpenBrace)));
+            check!(parser.eat(exp!(OpenBrace)));
             let mut body = Vec::new();
             while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
                 body.extend(parse_single_html(context, ts_string, parser)?);
             }
-            assert!(parser.eat(exp!(CloseBrace)));
-            assert!(parser.eat(exp!(FatArrow)));
-
-            let result_expr = match parser.parse_expr() {
-                Ok(expr) => expr,
-                Err(error) => {
-                    panic!("{:?} {:?}", error, parser.parse_tokens());
-                }
-            };
+            check!(parser.eat(exp!(CloseBrace)));
 
             let else_ = if parser.eat_keyword(exp!(Else)) {
-                assert!(parser.eat(exp!(OpenBrace)));
+                // TODO else if
+
+                check!(parser.eat(exp!(OpenBrace)));
                 let mut body = Vec::new();
                 while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
                     body.extend(parse_single_html(context, ts_string, parser)?);
                 }
-                assert!(parser.eat(exp!(CloseBrace)));
+                check!(parser.eat(exp!(CloseBrace)));
                 Some(body)
             } else {
                 None
             };
-            assert!(parser.eat(exp!(Semi)));
+            check!(parser.eat(exp!(Semi)));
 
             result.push(Html::If {
                 conditional,
@@ -99,14 +93,14 @@ fn parse_single_html(
         }
         TokenKind::OpenDelim(Delimiter::Brace) => {
             //eprintln!("parsing inner expr");
-            assert!(parser.eat(exp!(OpenBrace)));
+            check!(parser.eat(exp!(OpenBrace)));
             let expr = match parser.parse_expr() {
                 Ok(expr) => expr,
                 Err(error) => {
                     panic!("{:?} {:?}", error, parser.parse_tokens());
                 }
             };
-            assert!(parser.eat(exp!(CloseBrace)));
+            check!(parser.eat(exp!(CloseBrace)));
             result.push(Html::Expr(expr))
         }
         TokenKind::Literal(_) => {
@@ -124,7 +118,7 @@ fn parse_single_html(
         }
         TokenKind::Lt => {
             //eprintln!("parsing lt");
-            parse_eat!(exp!(Lt));
+            check!(parser.eat(exp!(Lt)));
             match parser.token.kind {
                 TokenKind::Slash => {
                     //eprintln!("parsing slash");
@@ -133,7 +127,7 @@ fn parse_single_html(
                     let id = parser.token.ident().unwrap().0;
                     parser.bump();
                     //eprintln!("parsing gt");
-                    parse_eat!(exp!(Gt));
+                    check!(parser.eat(exp!(Gt)));
                     result.push(Html::Close { tag: id });
                 }
                 _ => {
@@ -158,11 +152,11 @@ fn parse_single_html(
                             rest_id.push((delimiter, i));
                         }
                         //eprintln!("parsing eq");
-                        parse_eat!(exp!(Eq)); // here
+                        check!(parser.eat(exp!(Eq))); // here
                         //eprintln!("parsing literal or expr");
                         match &parser.token.kind {
                             TokenKind::OpenDelim(Delimiter::Brace) => {
-                                assert!(parser.eat(exp!(OpenBrace)));
+                                check!(parser.eat(exp!(OpenBrace)));
                                 //eprintln!("parsing inner expr");
                                 let expr = match parser.parse_expr() {
                                     Ok(expr) => expr,
@@ -170,7 +164,7 @@ fn parse_single_html(
                                         panic!("{:?} {:?}", error, parser.parse_tokens());
                                     }
                                 };
-                                assert!(parser.eat(exp!(CloseBrace)));
+                                check!(parser.eat(exp!(CloseBrace)));
                                 attrs.push((base_id, rest_id, HtmlAttributeValue::Expr(expr)));
                             }
                             TokenKind::Literal(_) => {
@@ -194,7 +188,7 @@ fn parse_single_html(
                         }
                     }
                     //eprintln!("parsing gt");
-                    parse_eat!(exp!(Gt));
+                    check!(parser.eat(exp!(Gt)));
                     result.push(Html::Open { tag: id, attrs });
                 }
             }

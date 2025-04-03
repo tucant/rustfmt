@@ -246,7 +246,7 @@ fn rewrite_macro_inner(
         match format_html(context, shape, ts.clone(), mac.span()) {
             Ok(rw) => return Ok(rw),
             Err(err) => {
-                println!("{} {}", err, context.snippet(mac.span()));
+                tracing::error!("{} {}", err, context.snippet(mac.span()));
                 return Err(err);
             }
         }
@@ -255,7 +255,7 @@ fn rewrite_macro_inner(
         match format_yew_html(context, shape, ts.clone(), mac.span()) {
             Ok(rw) => return Ok(rw),
             Err(err) => {
-                panic!("{} {}", err, context.snippet(mac.span()));
+                tracing::error!("{} {}", err, context.snippet(mac.span()));
                 return Err(err);
             }
         }
