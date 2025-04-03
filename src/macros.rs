@@ -1501,9 +1501,7 @@ fn format_html_inner(
             );
             result.push_str("}");
         }
-        Html::Comment(str_lit) => {
-            
-        }
+        Html::Comment(str_lit) => {}
         Html::Open { tag, attrs } => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("<");
