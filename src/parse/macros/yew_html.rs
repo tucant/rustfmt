@@ -5,6 +5,7 @@ use crate::rewrite::RewriteContext;
 use crate::rewrite::RewriteError;
 use crate::rewrite::RewriteResult;
 use crate::shape::Shape;
+use itertools::Either;
 use itertools::Itertools as _;
 use rustc_ast::Block;
 use rustc_ast::ptr::P;
@@ -16,11 +17,18 @@ use rustc_parse::exp;
 use rustc_parse::parser::Parser;
 use rustc_span::Span;
 use rustc_span::symbol::Ident;
+use rustc_span::Symbol;
 
 enum HtmlAttributeValue {
     Expr(P<Expr>),
     Literal(StrLit),
     Ident(Ident),
+}
+
+struct HtmlIf {
+    conditional: P<Expr>,
+    body: Vec<Html>,
+    else_: Option<Either<Vec<Html>, Vec<Html>>>,
 }
 
 enum Html {
@@ -34,11 +42,7 @@ enum Html {
     Close {
         tag: Ident,
     },
-    If {
-        conditional: P<Expr>,
-        body: Vec<Html>,
-        else_: Option<Vec<Html>>,
-    },
+    If(HtmlIf)
 }
 
 fn parse_single_html(
@@ -71,25 +75,27 @@ fn parse_single_html(
             check!(parser.eat(exp!(CloseBrace)));
 
             let else_ = if parser.eat_keyword(exp!(Else)) {
-                // TODO else if
-
-                check!(parser.eat(exp!(OpenBrace)));
-                let mut body = Vec::new();
-                while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
-                    body.extend(parse_single_html(context, ts_string, parser)?);
+                if parser.token.is_ident_named(Symbol::intern("if")) {
+                    Some(Either::Left(parse_single_html(context, ts_string, parser)?))
+                } else {
+                    check!(parser.eat(exp!(OpenBrace)));
+                    let mut body = Vec::new();
+                    while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
+                        body.extend(parse_single_html(context, ts_string, parser)?);
+                    }
+                    check!(parser.eat(exp!(CloseBrace)));
+                    Some(Either::Right(body))
                 }
-                check!(parser.eat(exp!(CloseBrace)));
-                Some(body)
             } else {
                 None
             };
             check!(parser.eat(exp!(Semi)));
 
-            result.push(Html::If {
+            result.push(Html::If(HtmlIf {
                 conditional,
                 body,
                 else_,
-            })
+            }))
         }
         TokenKind::OpenDelim(Delimiter::Brace) => {
             //eprintln!("parsing inner expr");
@@ -314,11 +320,11 @@ fn format_yew_html_inner(
             result.push_str(tag.as_str());
             result.push_str(">");
         }
-        Html::If {
+        Html::If(HtmlIf {
             conditional,
             body,
             else_,
-        } => {
+        }) => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("if ");
             result.push_str(
@@ -370,11 +376,11 @@ fn format_yew_html_vec(
             Html::Ident(_) => 0,
             Html::Open { tag: _, attrs: _ } => -1,
             Html::Close { tag: _ } => 1,
-            Html::If {
+            Html::If(HtmlIf {
                 conditional: _,
                 body: _,
                 else_: _,
-            } => 0,
+            }) => 0,
         };
         min_indent = std::cmp::max(min_indent, indent_amount);
     }
