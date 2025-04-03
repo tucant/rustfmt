@@ -1,10 +1,10 @@
+use crate::Indent;
 use crate::rewrite::MacroErrorKind;
 use crate::rewrite::Rewrite as _;
 use crate::rewrite::RewriteContext;
 use crate::rewrite::RewriteError;
 use crate::rewrite::RewriteResult;
 use crate::shape::Shape;
-use crate::Indent;
 use itertools::Itertools as _;
 use rustc_ast::Block;
 use rustc_ast::ptr::P;
@@ -14,8 +14,8 @@ use rustc_ast::tokenstream::TokenStream;
 use rustc_ast::{Expr, StrLit};
 use rustc_parse::exp;
 use rustc_parse::parser::Parser;
-use rustc_span::symbol::Ident;
 use rustc_span::Span;
+use rustc_span::symbol::Ident;
 
 enum HtmlAttributeValue {
     Expr(P<Expr>),
@@ -305,7 +305,12 @@ fn parse_single_html(
                 }
             }
         }
-        other => return Err(RewriteError::MacroFailure { kind: MacroErrorKind::ParseFailure, span: parser.token.span }),
+        other => {
+            return Err(RewriteError::MacroFailure {
+                kind: MacroErrorKind::ParseFailure,
+                span: parser.token.span,
+            });
+        }
     }
     Ok(result)
 }
