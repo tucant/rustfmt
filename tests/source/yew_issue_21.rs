@@ -5,7 +5,7 @@ use
 yew::prelude::*;
 
 fn f() -> Html {
-    html! {
+    yew::html! {
         <div>
             <h1>{ "One" }</h1>
             <h2>{ "Two" }</h2>
@@ -15,7 +15,7 @@ fn f() -> Html {
 }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        html! {
+        yew::html! {
             <div>
                 { "I am a card" }
                 <h1>{ "I am the title" }</h1>

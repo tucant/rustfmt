@@ -3,12 +3,12 @@
 
 impl Component for MyComponent {
     fn view(&self, _ctx: &Context<Self>) -> Html {
-        html! {
+        yew::html! {
             { match num {
-                1 => html! {
+                1 => yew::html! {
                     {"1"}
                 },
-                _ => html! {
+                _ => yew::html! {
                     {"???"}
                 }
             } }

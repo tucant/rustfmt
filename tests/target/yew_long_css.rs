@@ -3,7 +3,7 @@ use yew::prelude::*;
 
 #[function_component]
 fn Comp() -> Html {
-    html! {
+    yew::html! {
         <ul
             style="
                 display: flex;

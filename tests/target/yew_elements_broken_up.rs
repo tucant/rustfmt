@@ -4,7 +4,7 @@ use yew::prelude::*;
 #[function_component]
 fn Comp() -> Html {
     /* ??? */
-    html! {
+    yew::html! {
         <>
             <SomeComponent>
                 { "Very long text that will stop these three lines from being merged" }

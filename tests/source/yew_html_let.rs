@@ -5,7 +5,7 @@ yew::prelude::*;
 
 #[function_component]
 fn Comp() -> Html {
-    html! {
+    yew::html! {
         <> <div> let Some(x) = 4u8.checked_add(1) else { return }; <p>{ x }</p>
                 <p>{ x * 2 }</p>
             </div>

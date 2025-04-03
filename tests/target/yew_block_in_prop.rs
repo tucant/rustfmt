@@ -3,8 +3,8 @@ use yew::prelude::*;
 
 #[function_component]
 fn Comp() -> Html {
-    html!(<div id={let id = "idk"; id} />);
-    html!(
+    yew::html!(<div id={let id = "idk"; id} />);
+    yew::html!(
         <div
             id={let id = "one line
                              another line"; id}

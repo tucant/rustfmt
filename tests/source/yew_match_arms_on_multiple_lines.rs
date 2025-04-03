@@ -4,4 +4,4 @@
 use yew::prelude::*;
 
 #[function_component]
-fn Comp() -> Html { html! { match x { A::B => {}, A::C => {} } } }
+fn Comp() -> Html { yew::html! { match x { A::B => {}, A::C => {} } } }

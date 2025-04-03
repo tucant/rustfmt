@@ -5,11 +5,11 @@ use yew::prelude::*;
 fn app() -> Html { 
 let names = vec!["Sam","Bob","Ray"];
 
-html! {
+yew::html! {
 <div id="introductions">
 {
 names.into_iter().map(|name| {
-html!{<div key={name}>{ format!("Hello, I'am {}!",name) }</div>}
+yew::html!{<div key={name}>{ format!("Hello, I'am {}!",name) }</div>}
 }).collect::<Html>()
 }
 </div>

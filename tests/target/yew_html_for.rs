@@ -4,7 +4,7 @@ use yew::prelude::*;
 
 #[function_component]
 fn Comp() -> Html {
-    html! {
+    yew::html! {
         for i in 0 .. 10 {
             <code>{ i }</code>
             <br />

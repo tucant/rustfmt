@@ -5,7 +5,7 @@ yew::prelude::*;
 
 #[function_component]
 fn Comp() -> Html {
-    html! {
+    yew::html! {
         match ctx.selected_tab() {
             0 => <div id="inputs">
                 <Slider

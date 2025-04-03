@@ -2,7 +2,7 @@
 // config: yew.html_flavor="Ext"
 
 fn f() {
-html!{
+yew::html!{
              <h1>{ "1" }</h1>
     <h2>{ "2" }</h2>
     <h3>{ "3" }</h3>

@@ -5,7 +5,7 @@ use yew::prelude::*;
 
 #[function_component]
 fn Comp() -> Html {
-    html! {
+    yew::html! {
         match x {
             A::B => {},
             A::C => {},

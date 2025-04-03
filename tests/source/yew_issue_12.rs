@@ -4,5 +4,5 @@ yew::prelude::*;
 
 #[function_component]
 fn Comp() -> Html {
-    html!(<p>{ "Some text" }</p>)
+    yew::html!(<p>{ "Some text" }</p>)
 }

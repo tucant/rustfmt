@@ -6,7 +6,7 @@ yew::prelude::*;
 
 #[function_component]
 fn Comp() -> Html {
-    html! {
+    yew::html! {
 <>
 <div>
 <code>
@@ -16,5 +16,5 @@ fn Comp() -> Html {
 if true { { "true" } } else {{"false"}}
 </>
     };
-html!(for i in 0 .. 10 {{i}})
+yew::html!(for i in 0 .. 10 {{i}})
 }

@@ -5,7 +5,7 @@ use yew::prelude::*;
 fn Comp() -> Html {
     let loading = true;
 
-    html! {
+    yew::html! {
         if true {
             { "true" }
         } else {
