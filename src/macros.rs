@@ -250,6 +250,15 @@ fn rewrite_macro_inner(
             }
         }
     }
+    if macro_name == "yew::html!" {
+        match format_yew_html(context, shape, ts.clone(), mac.span()) {
+            Ok(rw) => return Ok(rw),
+            Err(err) => {
+                warn!("{} {}", err, context.snippet(mac.span()));
+                return Err(err);
+            }
+        }
+    }
 
     let ParsedMacroArgs {
         args: arg_vec,
