@@ -1,5 +1,7 @@
+use crate::rewrite::MacroErrorKind;
 use crate::rewrite::Rewrite as _;
 use crate::rewrite::RewriteContext;
+use crate::rewrite::RewriteError;
 use crate::rewrite::RewriteResult;
 use crate::shape::Shape;
 use crate::Indent;
@@ -58,7 +60,7 @@ fn parse_single_html(
     context: &RewriteContext<'_>,
     ts_string: &str,
     parser: &mut Parser<'_>,
-) -> Option<Vec<Html>> {
+) -> Result<Vec<Html>, RewriteError> {
     macro_rules! parse_eat {
         ($($arg:expr),*) => {
             if !parser.eat($($arg,)*) {
@@ -107,11 +109,7 @@ fn parse_single_html(
                     assert!(parser.eat(exp!(OpenBrace)));
                     let mut body = Vec::new();
                     while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
-                        if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
-                            body.extend(some_htmls);
-                        } else {
-                            panic!();
-                        }
+                        body.extend(parse_single_html(context, ts_string, parser)?);
                     }
                     assert!(parser.eat(exp!(CloseBrace)));
                     assert!(parser.eat(exp!(FatArrow)));
@@ -127,12 +125,7 @@ fn parse_single_html(
                         assert!(parser.eat(exp!(OpenBrace)));
                         let mut body = Vec::new();
                         while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
-                            if let Some(some_htmls) = parse_single_html(context, ts_string, parser)
-                            {
-                                body.extend(some_htmls);
-                            } else {
-                                panic!();
-                            }
+                            body.extend(parse_single_html(context, ts_string, parser)?);
                         }
                         assert!(parser.eat(exp!(CloseBrace)));
                         assert!(parser.eat(exp!(FatArrow)));
@@ -168,11 +161,7 @@ fn parse_single_html(
                     assert!(parser.eat(exp!(OpenBrace)));
                     let mut body = Vec::new();
                     while parser.token.kind != TokenKind::CloseDelim(Delimiter::Brace) {
-                        if let Some(some_htmls) = parse_single_html(context, ts_string, parser) {
-                            body.extend(some_htmls);
-                        } else {
-                            panic!();
-                        }
+                        body.extend(parse_single_html(context, ts_string, parser)?);
                     }
                     assert!(parser.eat(exp!(CloseBrace)));
                     assert!(parser.eat(exp!(FatArrow)));
@@ -316,25 +305,21 @@ fn parse_single_html(
                 }
             }
         }
-        other => panic!("unexpected token {:?} {}", other, ts_string),
+        other => return Err(RewriteError::MacroFailure { kind: MacroErrorKind::ParseFailure, span: parser.token.span }),
     }
-    Some(result)
+    Ok(result)
 }
 
-fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Option<Vec<Html>> {
+fn parse_html(context: &RewriteContext<'_>, ts: TokenStream) -> Result<Vec<Html>, RewriteError> {
     let ts_string = format!("{:?}", ts);
     //eprintln!("parsing token stream {:?}", ts);
     let mut result = vec![];
     let mut parser = super::build_parser(context, ts);
     while parser.token.kind != TokenKind::Eof {
-        if let Some(val) = parse_single_html(context, &ts_string, &mut parser) {
-            result.extend(val);
-        } else {
-            panic!();
-        }
+        result.extend(parse_single_html(context, &ts_string, &mut parser)?);
     }
 
-    Some(result)
+    Ok(result)
 }
 
 fn format_yew_html_inner(
@@ -651,7 +636,7 @@ pub(crate) fn format_yew_html(
 
     result.push_str("html_extractor::html! {");
 
-    let parsed_elems = parse_html(context, ts).unwrap();
+    let parsed_elems = parse_html(context, ts)?;
     let mut indent = shape.indent.block_indent(context.config);
     format_yew_html_vec(context, shape, &mut indent, &mut result, &parsed_elems)?;
 
