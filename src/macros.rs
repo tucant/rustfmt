@@ -30,6 +30,7 @@ use crate::lists::{ListFormatting, itemize_list, write_list};
 use crate::overflow;
 use crate::parse::macros::html::{Html, HtmlAttributeValue, parse_html};
 use crate::parse::macros::lazy_static::parse_lazy_static;
+use crate::parse::macros::yew_html::format_yew_html;
 use crate::parse::macros::{ParsedMacroArgs, parse_expr, parse_macro_args};
 use crate::rewrite::{
     MacroErrorKind, Rewrite, RewriteContext, RewriteError, RewriteErrorExt, RewriteResult,
