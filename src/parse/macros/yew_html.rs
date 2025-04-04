@@ -11,6 +11,7 @@ use rustc_ast::Block;
 use rustc_ast::ptr::P;
 use rustc_ast::token::Delimiter;
 use rustc_ast::token::TokenKind;
+use rustc_ast::token::TokenKind::Slash;
 use rustc_ast::tokenstream::TokenStream;
 use rustc_ast::{Expr, StrLit};
 use rustc_parse::exp;
@@ -38,11 +39,17 @@ enum Html {
     Open {
         tag: Ident,
         attrs: Vec<(Ident, Vec<(TokenKind, Ident)>, HtmlAttributeValue)>,
+        self_closing: bool,
     },
     Close {
         tag: Ident,
     },
     If(HtmlIf),
+    // TODO match
+    // TODO self closing
+    // TODO attribute values can contain multiple statements?
+    // TODO <>
+    // TODO <@{"div"} dynamic> tagnames </@>
 }
 
 fn parse_single_html(
@@ -205,9 +212,24 @@ fn parse_single_html(
                             _ => panic!(),
                         }
                     }
-                    //eprintln!("parsing gt");
-                    check!(parser.eat(exp!(Gt)));
-                    result.push(Html::Open { tag: id, attrs });
+                    if parser.token.kind == Slash {
+                        //eprintln!("parsing gt");
+                        parser.bump();
+                        check!(parser.eat(exp!(Gt)));
+                        result.push(Html::Open {
+                            tag: id,
+                            attrs,
+                            self_closing: true,
+                        });
+                    } else {
+                        //eprintln!("parsing gt");
+                        check!(parser.eat(exp!(Gt)));
+                        result.push(Html::Open {
+                            tag: id,
+                            attrs,
+                            self_closing: false,
+                        });
+                    }
                 }
             }
         }
@@ -271,7 +293,11 @@ fn format_yew_html_inner(
             );
             result.push_str("}");
         }
-        Html::Open { tag, attrs } => {
+        Html::Open {
+            tag,
+            attrs,
+            self_closing,
+        } => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("<");
             result.push_str(tag.as_str());
@@ -314,6 +340,9 @@ fn format_yew_html_inner(
                     }
                     HtmlAttributeValue::Ident(ident) => result.push_str(ident.as_str()),
                 }
+            }
+            if *self_closing {
+                result.push_str(" /");
             }
             result.push_str(">");
             *indent = indent.block_indent(context.config);
@@ -397,7 +426,11 @@ fn format_yew_html_vec(
             Html::Expr(_) => 0,
             Html::Literal(_) => 0,
             Html::Ident(_) => 0,
-            Html::Open { tag: _, attrs: _ } => -1,
+            Html::Open {
+                tag: _,
+                attrs: _,
+                self_closing: _,
+            } => -1,
             Html::Close { tag: _ } => 1,
             Html::If(HtmlIf {
                 conditional: _,
