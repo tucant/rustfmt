@@ -1,3 +1,4 @@
+use crate::utils::mk_sp;
 use crate::Indent;
 use crate::rewrite::MacroErrorKind;
 use crate::rewrite::Rewrite as _;
@@ -7,6 +8,7 @@ use crate::rewrite::RewriteResult;
 use crate::shape::Shape;
 use itertools::Either;
 use itertools::Itertools as _;
+use rustc_ast::token::TokenKind::Lt;
 use rustc_ast::Block;
 use rustc_ast::ptr::P;
 use rustc_ast::token::Delimiter;
@@ -37,14 +39,22 @@ enum Html {
     Literal(StrLit),
     Ident(Ident),
     Open {
+        start_span: Span,
         tag: Option<Ident>,
         attrs: Vec<(Ident, Vec<(TokenKind, Ident)>, HtmlAttributeValue)>,
         self_closing: bool,
+        end_span: Span,
     },
     Close {
+        start_span: Span,
         tag: Option<Ident>,
+        end_span: Span,
     },
-    If(HtmlIf),
+    If {
+        start_span: Span,
+        inner: HtmlIf,
+        end_span: Span,
+    },
     // TODO 1. <>
     // TODO 2. if let
     // TODO 3. { for
@@ -76,6 +86,7 @@ fn parse_single_html(
     let mut result = vec![];
     match &parser.token.kind {
         TokenKind::Ident(symbol, _) if symbol.as_str() == "if" => {
+            let start_span = parser.token.span;
             check!(parser.eat_keyword(exp!(If)));
             let conditional = match parser.parse_expr_cond() {
                 Ok(expr) => expr,
@@ -106,11 +117,17 @@ fn parse_single_html(
                 None
             };
 
-            result.push(Html::If(HtmlIf {
-                conditional,
-                body,
-                else_,
-            }))
+            let end_span = parser.token.span;
+
+            result.push(Html::If {
+                start_span,    
+                inner: HtmlIf {
+                    conditional,
+                    body,
+                    else_,
+                },
+                end_span
+            })
         }
         TokenKind::OpenDelim(Delimiter::Brace) => {
             //eprintln!("parsing inner expr");
@@ -142,6 +159,7 @@ fn parse_single_html(
         }
         TokenKind::Lt => {
             //eprintln!("parsing lt");
+            let start_span = parser.token.span;
             check!(parser.eat(exp!(Lt)));
             match parser.token.kind {
                 TokenKind::Slash => {
@@ -151,21 +169,26 @@ fn parse_single_html(
                     if parser.token.kind == TokenKind::Gt {
                         //eprintln!("parsing gt");
                         check!(parser.eat(exp!(Gt)));
-                        result.push(Html::Close { tag: None });
+                        let end_span = parser.token.span;
+                        result.push(Html::Close { start_span, tag: None, end_span });
                     } else {
                         let id = parser.token.ident().unwrap().0;
                         parser.bump();
                         //eprintln!("parsing gt");
                         check!(parser.eat(exp!(Gt)));
-                        result.push(Html::Close { tag: Some(id) });
+                        let end_span = parser.token.span;
+                        result.push(Html::Close { start_span, tag: Some(id), end_span });
                     }
                 }
                 TokenKind::Gt => {
                     check!(parser.eat(exp!(Gt)));
+                    let end_span = parser.token.span;
                     result.push(Html::Open {
+                        start_span,
                         tag: None,
                         attrs: Vec::new(),
                         self_closing: false,
+                        end_span
                     });
                 }
                 _ => {
@@ -239,18 +262,24 @@ fn parse_single_html(
                         //eprintln!("parsing gt");
                         parser.bump();
                         check!(parser.eat(exp!(Gt)));
+                        let end_span = parser.token.span;
                         result.push(Html::Open {
+                            start_span,
                             tag: Some(id),
                             attrs,
                             self_closing: true,
+                            end_span
                         });
                     } else {
                         //eprintln!("parsing gt");
                         check!(parser.eat(exp!(Gt)));
+                        let end_span = parser.token.span;
                         result.push(Html::Open {
+                            start_span,
                             tag: Some(id),
                             attrs,
                             self_closing: false,
+                            end_span
                         });
                     }
                 }
@@ -317,9 +346,11 @@ fn format_yew_html_inner(
             result.push_str("}");
         }
         Html::Open {
+            start_span,
             tag,
             attrs,
             self_closing,
+            end_span
         } => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("<");
@@ -372,7 +403,7 @@ fn format_yew_html_inner(
             result.push_str(">");
             *indent = indent.block_indent(context.config);
         }
-        Html::Close { tag } => {
+        Html::Close { start_span, tag, end_span } => {
             *indent = indent.block_unindent(context.config);
             if let Some(tag) = tag {
                 if ![
@@ -390,11 +421,15 @@ fn format_yew_html_inner(
             }
             result.push_str(">");
         }
-        Html::If(HtmlIf {
-            conditional,
-            body,
-            else_,
-        }) => {
+        Html::If{
+            start_span,
+            inner: HtmlIf {
+                conditional,
+                body,
+                else_,
+            },
+            end_span
+        } => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("if ");
             result.push_str(
@@ -456,16 +491,22 @@ fn format_yew_html_vec(
             Html::Literal(_) => 0,
             Html::Ident(_) => 0,
             Html::Open {
+                start_span: _,
                 tag: _,
                 attrs: _,
                 self_closing: _,
+                end_span: _
             } => -1,
-            Html::Close { tag: _ } => 1,
-            Html::If(HtmlIf {
-                conditional: _,
-                body: _,
-                else_: _,
-            }) => 0,
+            Html::Close { start_span: _, tag: _, end_span: _ } => 1,
+            Html::If {
+                start_span,
+                inner: HtmlIf {
+                    conditional: _,
+                    body: _,
+                    else_: _,
+                },
+                end_span
+            } => 0,
         };
         min_indent = std::cmp::max(min_indent, indent_amount);
     }
@@ -475,6 +516,15 @@ fn format_yew_html_vec(
     }
 
     for html in elems {
+        /*let span_between_attr = mk_sp(attr.span.hi(), next_attr.span.lo());
+        let snippet = context.snippet(span_between_attr);
+        let comment = crate::comment::recover_missing_comment_in_span(
+            missing_span,
+            shape.with_max_width(context.config),
+            context,
+            0,
+        )?;*/
+
         format_yew_html_inner(context, shape, indent, result, html).unwrap();
     }
 
