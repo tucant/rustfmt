@@ -344,13 +344,23 @@ fn format_yew_html_inner(
             *indent = indent.block_unindent(context.config);
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("} ");
-            if let Some(body) = else_ {
-                result.push_str(" else {");
-                *indent = indent.block_indent(context.config);
-                format_yew_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
-                *indent = indent.block_unindent(context.config);
-                result.push_str(&indent.to_string_with_newline(context.config));
-                result.push_str("}");
+            match else_ {
+                None => {}
+                Some(Either::Left(left)) => {
+                    result.push_str(" else ");
+                    format_yew_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
+                    *indent = indent.block_unindent(context.config);
+                    result.push_str(&indent.to_string_with_newline(context.config));
+                    result.push_str("}");
+                },
+                Some(Either::Right(right)) => {
+                    result.push_str(" else {");
+                    *indent = indent.block_indent(context.config);
+                    format_yew_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
+                    *indent = indent.block_unindent(context.config);
+                    result.push_str(&indent.to_string_with_newline(context.config));
+                    result.push_str("}");
+                }
             }
             *indent = *indent_after;
             *indent = indent.block_unindent(context.config);
