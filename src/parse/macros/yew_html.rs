@@ -648,6 +648,8 @@ fn format_yew_html_vec(
 }
 
 pub(crate) fn format_yew_html(
+    start_span: Span,
+    end_span: Span,
     context: &RewriteContext<'_>,
     shape: Shape,
     ts: TokenStream,
@@ -660,8 +662,8 @@ pub(crate) fn format_yew_html(
     let parsed_elems = parse_html(context, ts)?;
     let mut indent = shape.indent.block_indent(context.config);
     format_yew_html_vec(
-        span.shrink_to_lo(),
-        span.shrink_to_hi(),
+        start_span.shrink_to_hi(),
+        end_span.shrink_to_lo(),
         context,
         shape,
         &mut indent,

@@ -252,7 +252,7 @@ fn rewrite_macro_inner(
         }
     }
     if macro_name == "yew::html!" {
-        match format_yew_html(context, shape, ts.clone(), mac.span()) {
+        match format_yew_html(mac.args.dspan.open, mac.args.dspan.close, context, shape, ts.clone(), mac.span()) {
             Ok(rw) => return Ok(rw),
             Err(err) => {
                 tracing::error!("{} {}", err, context.snippet(mac.span()));
