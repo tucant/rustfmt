@@ -574,33 +574,6 @@ fn format_yew_html_vec(
     let low_spans: Vec<_> = std::iter::once(start_span).chain(elems
         .iter()
         .map(|elem| match elem {
-            Html::Expr(p) => p.span.shrink_to_lo(),
-            Html::Literal(str_lit) => str_lit.span.shrink_to_lo(),
-            Html::Ident(ident) => ident.span.shrink_to_lo(),
-            Html::Open {
-                start_span,
-                tag,
-                attrs,
-                self_closing,
-                end_span,
-            } => start_span.shrink_to_lo(),
-            Html::Close {
-                start_span,
-                tag,
-                end_span,
-            } => start_span.shrink_to_lo(),
-            Html::If {
-                start_span,
-                before_body,
-                after_body,
-                inner,
-                end_span,
-            } => start_span.shrink_to_lo(),
-        }))
-        .collect();
-    let high_spans: Vec<_> = elems
-        .iter()
-        .map(|elem| match elem {
             Html::Expr(p) => p.span.shrink_to_hi(),
             Html::Literal(str_lit) => str_lit.span.shrink_to_hi(),
             Html::Ident(ident) => ident.span.shrink_to_hi(),
@@ -623,22 +596,61 @@ fn format_yew_html_vec(
                 inner,
                 end_span,
             } => end_span.shrink_to_hi(),
+        }))
+        .collect();
+    let high_spans: Vec<_> = elems
+        .iter()
+        .map(|elem| match elem {
+            Html::Expr(p) => p.span.shrink_to_lo(),
+            Html::Literal(str_lit) => str_lit.span.shrink_to_lo(),
+            Html::Ident(ident) => ident.span.shrink_to_lo(),
+            Html::Open {
+                start_span,
+                tag,
+                attrs,
+                self_closing,
+                end_span,
+            } => start_span.shrink_to_lo(),
+            Html::Close {
+                start_span,
+                tag,
+                end_span,
+            } => start_span.shrink_to_lo(),
+            Html::If {
+                start_span,
+                before_body,
+                after_body,
+                inner,
+                end_span,
+            } => start_span.shrink_to_lo(),
         })
         .chain(std::iter::once(end_span))
         .collect();
     for i in 0..elems.len() {
         let html = &elems[i];
-        let span_between_elem = mk_sp(low_spans[i].lo(), high_spans[i].hi());
-        //let snippet = context.snippet(span_between_elem);
+        let span_between_elem = mk_sp(low_spans[i].hi(), high_spans[i].lo());
+        let snippet = context.snippet(span_between_elem);
         let comment = crate::comment::recover_missing_comment_in_span(
             span_between_elem,
             shape.with_max_width(context.config),
             context,
             0,
         )?;
-        result.push_str(&comment);
+        result.push_str("[");
+        result.push_str(&snippet);
+        result.push_str("]");
         format_yew_html_inner(context, shape, indent, result, html).unwrap();
     }
+    let span_between_elem = mk_sp(low_spans[elems.len()].hi(), high_spans[elems.len()].lo());
+    let comment = crate::comment::recover_missing_comment_in_span(
+        span_between_elem,
+        shape.with_max_width(context.config),
+        context,
+        0,
+    )?;
+    result.push_str("[");
+    result.push_str(&comment);
+    result.push_str("]");
 
     for _ in 0..min_indent {
         *indent = indent.block_unindent(context.config);
