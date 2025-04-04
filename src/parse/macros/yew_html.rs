@@ -92,7 +92,6 @@ fn parse_single_html(
             } else {
                 None
             };
-            check!(parser.eat(exp!(Semi)));
 
             result.push(Html::If(HtmlIf {
                 conditional,
