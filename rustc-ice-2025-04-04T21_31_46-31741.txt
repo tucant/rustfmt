@@ -1,0 +1,104 @@
+thread 'main' panicked at src/parse/macros/yew_html.rs:632:9:
+
+stack backtrace:
+   0:     0x7fa9cf4cce25 - std::backtrace::Backtrace::create::h38afe53d7dc2ee8a
+   1:     0x7fa9cd862495 - std::backtrace::Backtrace::force_capture::h23772f3a350b6c5f
+   2:     0x7fa9cc8ee79f - std[43c66c29bb2da0cf]::panicking::update_hook::<alloc[9d6af472d28301be]::boxed::Box<rustc_driver_impl[2a6f85d55f84b44d]::install_ice_hook::{closure#1}>>::{closure#0}
+   3:     0x7fa9cd87bd13 - std::panicking::rust_panic_with_hook::hec08a623892d81df
+   4:     0x7fa9cd87ba0a - std::panicking::begin_panic_handler::{{closure}}::hb834b9141c0f2230
+   5:     0x7fa9cd878019 - std::sys::backtrace::__rust_end_short_backtrace::h1dafc29f13d910f2
+   6:     0x7fa9cd87b6cd - __rustc[e22706cb8dde8ca2]::rust_begin_unwind
+   7:     0x7fa9ca29dc90 - core::panicking::panic_fmt::h3e60cc11c74279b0
+   8:     0x5616fec4c980 - core::panicking::panic_display::he7e458dcfb6b36e7
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panicking.rs:261:5
+   9:     0x5616feabf4fb - rustfmt_nightly::parse::macros::yew_html::format_yew_html_vec::panic_cold_display::h500648da53b47b93
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panic.rs:100:13
+  10:     0x5616fec15149 - rustfmt_nightly::parse::macros::yew_html::format_yew_html_vec::he4b0b9cb05b1dc3e
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/yew_html.rs:632:9
+  11:     0x5616fec15573 - rustfmt_nightly::parse::macros::yew_html::format_yew_html::hbbfe83480021b411
+                               at /home/moritz/Documents/rustfmt/src/parse/macros/yew_html.rs:662:5
+  12:     0x5616fec0280c - rustfmt_nightly::macros::rewrite_macro_inner::h98907a8acda0ffdb
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:255:15
+  13:     0x5616feabf807 - rustfmt_nightly::macros::rewrite_macro::{{closure}}::hd420ba9751733902
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:173:13
+  14:     0x5616feb49271 - core::ops::function::FnOnce::call_once::hc04ae69144ff548f
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ops/function.rs:250:5
+  15:     0x5616fec505cb - <core::panic::unwind_safe::AssertUnwindSafe<F> as core::ops::function::FnOnce<()>>::call_once::h3ef58edbb49668e0
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/panic/unwind_safe.rs:272:9
+  16:     0x5616febfa2af - std::panicking::try::do_call::h1030e03db2d47baa
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:589:40
+  17:     0x5616fea93c8b - __rust_try
+  18:     0x5616fea93b09 - std::panicking::try::h7db17d77a97ed1de
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panicking.rs:552:19
+  19:     0x5616fea93b09 - std::panic::catch_unwind::hf7abcf84743ba5f0
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/panic.rs:359:14
+  20:     0x5616fec0037c - rustfmt_nightly::macros::rewrite_macro::h1dbcf1d952938a52
+                               at /home/moritz/Documents/rustfmt/src/macros.rs:172:22
+  21:     0x5616fecb74ac - rustfmt_nightly::visitor::FmtVisitor::visit_mac::{{closure}}::hf4e00b1e78106848
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:701:47
+  22:     0x5616fecb78c9 - rustfmt_nightly::visitor::FmtVisitor::with_context::h2781ed0dffee987e
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:1009:22
+  23:     0x5616febc6991 - rustfmt_nightly::visitor::FmtVisitor::visit_mac::h0238ec311fe1f361
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:701:23
+  24:     0x5616febc0469 - rustfmt_nightly::visitor::FmtVisitor::visit_stmt::hfe66f4cbca1f6929
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:175:21
+  25:     0x5616febc8ada - rustfmt_nightly::visitor::FmtVisitor::walk_stmts::h9e261db10da142e2
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:895:13
+  26:     0x5616febc8cfa - rustfmt_nightly::visitor::FmtVisitor::walk_block_stmts::h9a5b9a2070ebd8b3
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:926:9
+  27:     0x5616febc0f0e - rustfmt_nightly::visitor::FmtVisitor::visit_block::h97e7fc60af0adcbc
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:232:9
+  28:     0x5616febc3608 - rustfmt_nightly::visitor::FmtVisitor::visit_fn::h6b280ab494c3310b
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:430:9
+  29:     0x5616febc4e1c - rustfmt_nightly::visitor::FmtVisitor::visit_item::ha9c2d871a50ca1cd
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:559:25
+  30:     0x5616febbf0a4 - rustfmt_nightly::reorder::<impl rustfmt_nightly::visitor::FmtVisitor>::visit_items_with_reordering::h5b4ceeb6a9fc8ae8
+                               at /home/moritz/Documents/rustfmt/src/reorder.rs:349:17
+  31:     0x5616febc88b5 - rustfmt_nightly::visitor::FmtVisitor::walk_mod_items::hd6455ddaf91db914
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:879:9
+  32:     0x5616febc9769 - rustfmt_nightly::visitor::FmtVisitor::format_separate_mod::hdc42972bf174af0e
+                               at /home/moritz/Documents/rustfmt/src/visitor.rs:988:9
+  33:     0x5616fe93f1ae - rustfmt_nightly::formatting::FormatContext<T>::format_file::h8231554c87581120
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:222:9
+  34:     0x5616fe93e51f - rustfmt_nightly::formatting::format_project::h7f71fb23bb9ad35d
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:159:9
+  35:     0x5616fe93f882 - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::{{closure}}::h99c182c54ce5cd9a
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:49:33
+  36:     0x5616fe91ee40 - scoped_tls::ScopedKey<T>::with::h357dff6f5db63799
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:171:13
+  37:     0x5616fe937593 - rustc_span::create_session_if_not_set_then::{{closure}}::h946d1bf2b116ec99
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/compiler/rustc_span/src/lib.rs:160:50
+  38:     0x5616fe91ed04 - scoped_tls::ScopedKey<T>::set::hbb756c82edc5d9ad
+                               at /rust/deps/scoped-tls-1.0.1/src/lib.rs:137:9
+  39:     0x5616fe9374f5 - rustc_span::create_session_if_not_set_then::h650921204b361bd9
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/compiler/rustc_span/src/lib.rs:160:9
+  40:     0x5616fe9377ca - rustfmt_nightly::formatting::<impl rustfmt_nightly::Session<T>>::format_input_inner::h45bfde9a35c5d210
+                               at /home/moritz/Documents/rustfmt/src/formatting.rs:39:9
+  41:     0x5616fe937c38 - rustfmt_nightly::Session<T>::format::hb7feac94004c3765
+                               at /home/moritz/Documents/rustfmt/src/lib.rs:466:9
+  42:     0x5616fe92c334 - rustfmt::format_and_emit_report::hbb036b195ec05579
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:399:11
+  43:     0x5616fe922745 - rustfmt::format_string::h817b060738689584
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:321:5
+  44:     0x5616fe92109d - rustfmt::execute::h43887fbf42e3933c
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:270:39
+  45:     0x5616fe920182 - rustfmt::main::h2946571a51fd9ad2
+                               at /home/moritz/Documents/rustfmt/src/bin/main.rs:38:27
+  46:     0x5616fe928bab - core::ops::function::FnOnce::call_once::hffd0d0b98e3d773f
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/ops/function.rs:250:5
+  47:     0x5616fe9310ee - std::sys::backtrace::__rust_begin_short_backtrace::hee64d0fe9847ea47
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/sys/backtrace.rs:152:18
+  48:     0x5616fe93a2f1 - std::rt::lang_start::{{closure}}::h1a47fc77bc53888a
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/rt.rs:199:18
+  49:     0x7fa9cf13984f - std::rt::lang_start_internal::hf1c5ec0b1cc19157
+  50:     0x5616fe93a2d7 - std::rt::lang_start::h369af653508ba58f
+                               at /home/moritz/.rustup/toolchains/nightly-2025-04-02-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/std/src/rt.rs:198:5
+  51:     0x5616fe927d9e - main
+  52:     0x7fa9c8d2a248 - __libc_start_call_main
+  53:     0x7fa9c8d2a30b - __libc_start_main@GLIBC_2.2.5
+  54:     0x5616fe91cb85 - _start
+  55:                0x0 - <unknown>
+
+
+rustc version: 1.88.0-nightly (e2014e876 2025-04-01)
+platform: x86_64-unknown-linux-gnu

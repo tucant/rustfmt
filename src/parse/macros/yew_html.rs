@@ -571,7 +571,7 @@ fn format_yew_html_vec(
         *indent = indent.block_indent(context.config);
     }
 
-    let low_spans: Vec<_> = elems
+    let low_spans: Vec<_> = std::iter::once(start_span).chain(elems
         .iter()
         .map(|elem| match elem {
             Html::Expr(p) => p.span.shrink_to_lo(),
@@ -596,7 +596,7 @@ fn format_yew_html_vec(
                 inner,
                 end_span,
             } => start_span.shrink_to_lo(),
-        })
+        }))
         .collect();
     let high_spans: Vec<_> = elems
         .iter()
@@ -624,10 +624,12 @@ fn format_yew_html_vec(
                 end_span,
             } => start_span.shrink_to_lo(),
         })
+        .chain(std::iter::once(end_span))
         .collect();
     for i in 0..elems.len() {
         let html = &elems[i];
         let span_between_elem = mk_sp(low_spans[i].lo(), high_spans[i].hi());
+        //let snippet = context.snippet(span_between_elem);
         let comment = crate::comment::recover_missing_comment_in_span(
             span_between_elem,
             shape.with_max_width(context.config),
