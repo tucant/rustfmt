@@ -445,7 +445,7 @@ fn format_yew_html_inner(
             result.push_str(" {");
             *indent = indent.block_indent(context.config);
             let indent_after = &mut indent.clone();
-            format_yew_html_vec(context, shape, indent_after, result, body).unwrap();
+            format_yew_html_vec(  context, shape, indent_after, result, body).unwrap();
             *indent = indent.block_unindent(context.config);
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("} ");
@@ -476,6 +476,8 @@ fn format_yew_html_inner(
 }
 
 fn format_yew_html_vec(
+    start_span: Span,
+    end_span: Span,
     context: &RewriteContext<'_>,
     shape: Shape,
     indent: &mut Indent,
@@ -515,16 +517,36 @@ fn format_yew_html_vec(
         *indent = indent.block_indent(context.config);
     }
 
-    for html in elems {
-        /*let span_between_attr = mk_sp(attr.span.hi(), next_attr.span.lo());
-        let snippet = context.snippet(span_between_attr);
+    let low_spans: Vec<_> = elems.iter().map(|elem| {
+        match elem {
+            Html::Expr(p) => p.span.shrink_to_lo(),
+            Html::Literal(str_lit) => str_lit.span.shrink_to_lo(),
+            Html::Ident(ident) => ident.span.shrink_to_lo(),
+            Html::Open { start_span, tag, attrs, self_closing, end_span } => start_span.shrink_to_lo(),
+            Html::Close { start_span, tag, end_span } => start_span.shrink_to_lo(),
+            Html::If { start_span, inner, end_span } => start_span.shrink_to_lo(),
+        }
+    }).collect();
+    let high_spans: Vec<_> = elems.iter().map(|elem| {
+        match elem {
+            Html::Expr(p) => p.span.shrink_to_lo(),
+            Html::Literal(str_lit) => str_lit.span.shrink_to_lo(),
+            Html::Ident(ident) => ident.span.shrink_to_lo(),
+            Html::Open { start_span, tag, attrs, self_closing, end_span } => start_span.shrink_to_lo(),
+            Html::Close { start_span, tag, end_span } => start_span.shrink_to_lo(),
+            Html::If { start_span, inner, end_span } => start_span.shrink_to_lo(),
+        }
+    }).collect();
+    for i in 0..elems.len() {
+        let html = &elems[i];
+        let span_between_elem = mk_sp(low_spans[i].lo(), high_spans[i].hi());
         let comment = crate::comment::recover_missing_comment_in_span(
-            missing_span,
+            span_between_elem,
             shape.with_max_width(context.config),
             context,
             0,
-        )?;*/
-
+        )?;
+        result.push_str(&comment);
         format_yew_html_inner(context, shape, indent, result, html).unwrap();
     }
 
@@ -547,7 +569,7 @@ pub(crate) fn format_yew_html(
 
     let parsed_elems = parse_html(context, ts)?;
     let mut indent = shape.indent.block_indent(context.config);
-    format_yew_html_vec(context, shape, &mut indent, &mut result, &parsed_elems)?;
+    format_yew_html_vec(span.shrink_to_lo(),  span.shrink_to_hi(), context, shape, &mut indent, &mut result, &parsed_elems)?;
 
     result.push_str(&shape.indent.to_string_with_newline(context.config));
     result.push('}');
