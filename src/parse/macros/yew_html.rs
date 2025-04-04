@@ -628,6 +628,7 @@ fn format_yew_html_vec(
         .collect();
     for i in 0..elems.len() {
         let html = &elems[i];
+        println!("{:?} {:?}", low_spans[i].hi(), high_spans[i].lo());
         let span_between_elem = mk_sp(low_spans[i].hi(), high_spans[i].lo());
         let snippet = context.snippet(span_between_elem);
         let comment = crate::comment::recover_missing_comment_in_span(
