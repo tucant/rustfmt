@@ -141,13 +141,23 @@ fn parse_single_html(
                 }
                 _ => {
                     //eprintln!("parsing ident");
-                    let id = parser.token.ident().expect(&ts_string).0;
+                    let Some((id, _)) = parser.token.ident() else {
+                        return Err(RewriteError::MacroFailure {
+                            kind: MacroErrorKind::ParseFailure,
+                            span: parser.token.span,
+                        });
+                    };
                     parser.bump();
                     let mut attrs: Vec<(Ident, Vec<(TokenKind, Ident)>, HtmlAttributeValue)> =
                         Vec::new();
                     while parser.token.kind != TokenKind::Gt {
                         //eprintln!("parsing ident");
-                        let base_id = parser.token.ident().expect(&ts_string).0;
+                        let Some((base_id, _)) = parser.token.ident() else {
+                            return Err(RewriteError::MacroFailure {
+                                kind: MacroErrorKind::ParseFailure,
+                                span: parser.token.span,
+                            });
+                        };
                         parser.bump();
                         let mut rest_id = Vec::new();
                         // also minus?
