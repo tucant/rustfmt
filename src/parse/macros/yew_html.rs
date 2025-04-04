@@ -434,6 +434,9 @@ fn format_yew_html_inner(
                     result.push_str(&indent.to_string_with_newline(context.config));
                 }
             }
+            if result.ends_with("\n") {
+                result.push_str(&indent.to_string(context.config));
+            }
             result.push_str("</");
             if let Some(tag) = tag {
                 result.push_str(tag.as_str());
@@ -633,17 +636,20 @@ fn format_yew_html_vec(
         //let snippet = context.snippet(span_between_elem);
         let comment = crate::comment::recover_missing_comment_in_span(
             span_between_elem,
-            shape.with_max_width(context.config),
+            Shape::indented(*indent, context.config),
             context,
             0,
         )?;
         result.push_str(&comment);
+        if !comment.is_empty() {
+            result.push_str("\n");
+        }
         format_yew_html_inner(context, shape, indent, result, html).unwrap();
     }
     let span_between_elem = mk_sp(low_spans[elems.len()].hi(), high_spans[elems.len()].lo());
     let comment = crate::comment::recover_missing_comment_in_span(
         span_between_elem,
-        shape.with_max_width(context.config),
+        Shape::indented(*indent, context.config),
         context,
         0,
     )?;
