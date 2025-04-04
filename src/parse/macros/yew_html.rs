@@ -348,7 +348,7 @@ fn format_yew_html_inner(
                 None => {}
                 Some(Either::Left(left)) => {
                     result.push_str(" else ");
-                    format_yew_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
+                    format_yew_html_vec(context, shape, &mut indent.clone(), result, left).unwrap();
                     *indent = indent.block_unindent(context.config);
                     result.push_str(&indent.to_string_with_newline(context.config));
                     result.push_str("}");
@@ -356,7 +356,7 @@ fn format_yew_html_inner(
                 Some(Either::Right(right)) => {
                     result.push_str(" else {");
                     *indent = indent.block_indent(context.config);
-                    format_yew_html_vec(context, shape, &mut indent.clone(), result, body).unwrap();
+                    format_yew_html_vec(context, shape, &mut indent.clone(), result, right).unwrap();
                     *indent = indent.block_unindent(context.config);
                     result.push_str(&indent.to_string_with_newline(context.config));
                     result.push_str("}");
