@@ -601,28 +601,28 @@ fn format_yew_html_vec(
     let high_spans: Vec<_> = elems
         .iter()
         .map(|elem| match elem {
-            Html::Expr(p) => p.span.shrink_to_lo(),
-            Html::Literal(str_lit) => str_lit.span.shrink_to_lo(),
-            Html::Ident(ident) => ident.span.shrink_to_lo(),
+            Html::Expr(p) => p.span.shrink_to_hi(),
+            Html::Literal(str_lit) => str_lit.span.shrink_to_hi(),
+            Html::Ident(ident) => ident.span.shrink_to_hi(),
             Html::Open {
                 start_span,
                 tag,
                 attrs,
                 self_closing,
                 end_span,
-            } => start_span.shrink_to_lo(),
+            } => end_span.shrink_to_hi(),
             Html::Close {
                 start_span,
                 tag,
                 end_span,
-            } => start_span.shrink_to_lo(),
+            } => end_span.shrink_to_hi(),
             Html::If {
                 start_span,
                 before_body,
                 after_body,
                 inner,
                 end_span,
-            } => start_span.shrink_to_lo(),
+            } => end_span.shrink_to_hi(),
         })
         .chain(std::iter::once(end_span))
         .collect();
