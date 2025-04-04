@@ -16,8 +16,8 @@ use rustc_ast::{Expr, StrLit};
 use rustc_parse::exp;
 use rustc_parse::parser::Parser;
 use rustc_span::Span;
-use rustc_span::symbol::Ident;
 use rustc_span::Symbol;
+use rustc_span::symbol::Ident;
 
 enum HtmlAttributeValue {
     Expr(P<Expr>),
@@ -42,7 +42,7 @@ enum Html {
     Close {
         tag: Ident,
     },
-    If(HtmlIf)
+    If(HtmlIf),
 }
 
 fn parse_single_html(
@@ -53,9 +53,12 @@ fn parse_single_html(
     macro_rules! check {
         ($arg:expr) => {
             if !$arg {
-                return Err(RewriteError::MacroFailure { kind: MacroErrorKind::ParseFailure, span: parser.token.span })
+                return Err(RewriteError::MacroFailure {
+                    kind: MacroErrorKind::ParseFailure,
+                    span: parser.token.span,
+                });
             }
-        }
+        };
     }
     let mut result = vec![];
     match &parser.token.kind {
@@ -352,11 +355,12 @@ fn format_yew_html_inner(
                     *indent = indent.block_unindent(context.config);
                     result.push_str(&indent.to_string_with_newline(context.config));
                     result.push_str("}");
-                },
+                }
                 Some(Either::Right(right)) => {
                     result.push_str(" else {");
                     *indent = indent.block_indent(context.config);
-                    format_yew_html_vec(context, shape, &mut indent.clone(), result, right).unwrap();
+                    format_yew_html_vec(context, shape, &mut indent.clone(), result, right)
+                        .unwrap();
                     *indent = indent.block_unindent(context.config);
                     result.push_str(&indent.to_string_with_newline(context.config));
                     result.push_str("}");
