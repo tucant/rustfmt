@@ -50,6 +50,8 @@ enum Html {
     // TODO attribute values can contain multiple statements?
     // TODO <>
     // TODO <@{"div"} dynamic> tagnames </@>
+    // TODO .. spread syntax
+    // TODO generic type at tagname
 }
 
 fn parse_single_html(
@@ -156,7 +158,7 @@ fn parse_single_html(
                     parser.bump();
                     let mut attrs: Vec<(Ident, Vec<(TokenKind, Ident)>, HtmlAttributeValue)> =
                         Vec::new();
-                    while parser.token.kind != TokenKind::Gt {
+                    while parser.token.kind != TokenKind::Gt && parser.token.kind != Slash {
                         //eprintln!("parsing ident");
                         let Some((base_id, _)) = parser.token.ident() else {
                             return Err(RewriteError::MacroFailure {
