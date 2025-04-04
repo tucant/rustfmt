@@ -121,6 +121,7 @@ fn parse_single_html(
                 None
             };
 
+            // TODO FIXME if a comment is immediately following this span is for the token after the comment
             let end_span = parser.token.span;
 
             result.push(Html::If {
@@ -174,8 +175,8 @@ fn parse_single_html(
                     //eprintln!("parsing ident");
                     if parser.token.kind == TokenKind::Gt {
                         //eprintln!("parsing gt");
-                        check!(parser.eat(exp!(Gt)));
                         let end_span = parser.token.span;
+                        check!(parser.eat(exp!(Gt)));
                         result.push(Html::Close {
                             start_span,
                             tag: None,
@@ -185,8 +186,8 @@ fn parse_single_html(
                         let id = parser.token.ident().unwrap().0;
                         parser.bump();
                         //eprintln!("parsing gt");
-                        check!(parser.eat(exp!(Gt)));
                         let end_span = parser.token.span;
+                        check!(parser.eat(exp!(Gt)));
                         result.push(Html::Close {
                             start_span,
                             tag: Some(id),
@@ -195,8 +196,8 @@ fn parse_single_html(
                     }
                 }
                 TokenKind::Gt => {
-                    check!(parser.eat(exp!(Gt)));
                     let end_span = parser.token.span;
+                    check!(parser.eat(exp!(Gt)));
                     result.push(Html::Open {
                         start_span,
                         tag: None,
@@ -275,8 +276,8 @@ fn parse_single_html(
                     if parser.token.kind == Slash {
                         //eprintln!("parsing gt");
                         parser.bump();
-                        check!(parser.eat(exp!(Gt)));
                         let end_span = parser.token.span;
+                        check!(parser.eat(exp!(Gt)));
                         result.push(Html::Open {
                             start_span,
                             tag: Some(id),
@@ -286,8 +287,8 @@ fn parse_single_html(
                         });
                     } else {
                         //eprintln!("parsing gt");
-                        check!(parser.eat(exp!(Gt)));
                         let end_span = parser.token.span;
+                        check!(parser.eat(exp!(Gt)));
                         result.push(Html::Open {
                             start_span,
                             tag: Some(id),
@@ -628,18 +629,15 @@ fn format_yew_html_vec(
         .collect();
     for i in 0..elems.len() {
         let html = &elems[i];
-        println!("{:?} {:?}", low_spans[i].hi(), high_spans[i].lo());
         let span_between_elem = mk_sp(low_spans[i].hi(), high_spans[i].lo());
-        let snippet = context.snippet(span_between_elem);
+        //let snippet = context.snippet(span_between_elem);
         let comment = crate::comment::recover_missing_comment_in_span(
             span_between_elem,
             shape.with_max_width(context.config),
             context,
             0,
         )?;
-        result.push_str("[");
-        result.push_str(&snippet);
-        result.push_str("]");
+        result.push_str(&comment);
         format_yew_html_inner(context, shape, indent, result, html).unwrap();
     }
     let span_between_elem = mk_sp(low_spans[elems.len()].hi(), high_spans[elems.len()].lo());
@@ -649,9 +647,7 @@ fn format_yew_html_vec(
         context,
         0,
     )?;
-    result.push_str("[");
     result.push_str(&comment);
-    result.push_str("]");
 
     for _ in 0..min_indent {
         *indent = indent.block_unindent(context.config);
