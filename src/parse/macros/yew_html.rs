@@ -37,21 +37,25 @@ enum Html {
     Literal(StrLit),
     Ident(Ident),
     Open {
-        tag: Ident,
+        tag: Option<Ident>,
         attrs: Vec<(Ident, Vec<(TokenKind, Ident)>, HtmlAttributeValue)>,
         self_closing: bool,
     },
     Close {
-        tag: Ident,
+        tag: Option<Ident>,
     },
     If(HtmlIf),
+    // TODO 1. <>
+    // TODO 2. if let
+    // TODO 3. { for
     // TODO match
     // TODO self closing
     // TODO attribute values can contain multiple statements?
-    // TODO <>
+    // TODO
     // TODO <@{"div"} dynamic> tagnames </@>
     // TODO .. spread syntax
     // TODO generic type at tagname
+    // TODO { for data.veranstaltungen_or_module.iter().map(|entry| {
 }
 
 fn parse_single_html(
@@ -114,7 +118,10 @@ fn parse_single_html(
             let expr = match parser.parse_expr() {
                 Ok(expr) => expr,
                 Err(error) => {
-                    panic!("{:?} {:?}", error, parser.parse_tokens());
+                    return Err(RewriteError::MacroFailure {
+                        kind: MacroErrorKind::ParseFailure,
+                        span: error.span.primary_span().unwrap(),
+                    });
                 }
             };
             check!(parser.eat(exp!(CloseBrace)));
@@ -141,11 +148,25 @@ fn parse_single_html(
                     //eprintln!("parsing slash");
                     parser.bump();
                     //eprintln!("parsing ident");
-                    let id = parser.token.ident().unwrap().0;
-                    parser.bump();
-                    //eprintln!("parsing gt");
+                    if parser.token.kind == TokenKind::Gt {
+                        //eprintln!("parsing gt");
+                        check!(parser.eat(exp!(Gt)));
+                        result.push(Html::Close { tag: None });
+                    } else {
+                        let id = parser.token.ident().unwrap().0;
+                        parser.bump();
+                        //eprintln!("parsing gt");
+                        check!(parser.eat(exp!(Gt)));
+                        result.push(Html::Close { tag: Some(id) });
+                    }
+                }
+                TokenKind::Gt => {
                     check!(parser.eat(exp!(Gt)));
-                    result.push(Html::Close { tag: id });
+                    result.push(Html::Open {
+                        tag: None,
+                        attrs: Vec::new(),
+                        self_closing: false,
+                    });
                 }
                 _ => {
                     //eprintln!("parsing ident");
@@ -219,7 +240,7 @@ fn parse_single_html(
                         parser.bump();
                         check!(parser.eat(exp!(Gt)));
                         result.push(Html::Open {
-                            tag: id,
+                            tag: Some(id),
                             attrs,
                             self_closing: true,
                         });
@@ -227,7 +248,7 @@ fn parse_single_html(
                         //eprintln!("parsing gt");
                         check!(parser.eat(exp!(Gt)));
                         result.push(Html::Open {
-                            tag: id,
+                            tag: Some(id),
                             attrs,
                             self_closing: false,
                         });
@@ -302,7 +323,9 @@ fn format_yew_html_inner(
         } => {
             result.push_str(&indent.to_string_with_newline(context.config));
             result.push_str("<");
-            result.push_str(tag.as_str());
+            if let Some(tag) = tag {
+                result.push_str(tag.as_str());
+            }
             for (base_ident, rest_ident, value) in attrs {
                 result.push_str(" ");
                 result.push_str(base_ident.as_str());
@@ -351,16 +374,20 @@ fn format_yew_html_inner(
         }
         Html::Close { tag } => {
             *indent = indent.block_unindent(context.config);
-            if ![
-                "area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen",
-                "link", "meta", "param", "source", "track", "wbr",
-            ]
-            .contains(&tag.as_str())
-            {
-                result.push_str(&indent.to_string_with_newline(context.config));
+            if let Some(tag) = tag {
+                if ![
+                    "area", "base", "br", "col", "command", "embed", "hr", "img", "input",
+                    "keygen", "link", "meta", "param", "source", "track", "wbr",
+                ]
+                .contains(&tag.as_str())
+                {
+                    result.push_str(&indent.to_string_with_newline(context.config));
+                }
             }
             result.push_str("</");
-            result.push_str(tag.as_str());
+            if let Some(tag) = tag {
+                result.push_str(tag.as_str());
+            }
             result.push_str(">");
         }
         Html::If(HtmlIf {
