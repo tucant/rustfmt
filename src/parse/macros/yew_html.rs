@@ -35,7 +35,7 @@ struct HtmlIf {
 }
 
 enum Html {
-    Expr(P<Expr>),
+    Expr(P<Block>),
     Literal(StrLit),
     Ident(Ident),
     Open {
@@ -121,7 +121,8 @@ fn parse_single_html(
                 None
             };
 
-            // TODO FIXME if a comment is immediately following this span is for the token after the comment
+            // TODO FIXME if a comment is immediately following
+            // this span is for the token after the comment
             let end_span = parser.token.span;
 
             result.push(Html::If {
@@ -138,8 +139,7 @@ fn parse_single_html(
         }
         TokenKind::OpenDelim(Delimiter::Brace) => {
             //eprintln!("parsing inner expr");
-            check!(parser.eat(exp!(OpenBrace)));
-            let expr = match parser.parse_expr() {
+            let expr = match parser.parse_block() {
                 Ok(expr) => expr,
                 Err(error) => {
                     return Err(RewriteError::MacroFailure {
@@ -148,7 +148,6 @@ fn parse_single_html(
                     });
                 }
             };
-            check!(parser.eat(exp!(CloseBrace)));
             result.push(Html::Expr(expr))
         }
         TokenKind::Literal(_) => {
@@ -575,9 +574,8 @@ fn format_yew_html_vec(
         *indent = indent.block_indent(context.config);
     }
 
-    let low_spans: Vec<_> = std::iter::once(start_span).chain(elems
-        .iter()
-        .map(|elem| match elem {
+    let low_spans: Vec<_> = std::iter::once(start_span)
+        .chain(elems.iter().map(|elem| match elem {
             Html::Expr(p) => p.span.shrink_to_hi(),
             Html::Literal(str_lit) => str_lit.span.shrink_to_hi(),
             Html::Ident(ident) => ident.span.shrink_to_hi(),
