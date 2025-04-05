@@ -347,7 +347,6 @@ fn format_yew_html_inner(
         }
         Html::Expr(p) => {
             result.push_str(&indent.to_string_with_newline(context.config));
-            result.push_str("{");
             result.push_str(
                 &p.rewrite_result(
                     context,
@@ -357,7 +356,6 @@ fn format_yew_html_inner(
                 )
                 .unwrap(),
             );
-            result.push_str("}");
         }
         Html::Open {
             start_span,
