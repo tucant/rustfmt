@@ -28,7 +28,9 @@ use crate::expr::{RhsAssignKind, rewrite_array, rewrite_assign_rhs};
 use crate::lists::{ListFormatting, itemize_list, write_list};
 use crate::overflow;
 use crate::parse::macros::lazy_static::parse_lazy_static;
-use crate::parse::macros::{ParsedMacroArgs, parse_expr, parse_macro_args};
+use crate::parse::macros::{
+    ParsedMacroArgs, dioxus_rsx, html_extractor, parse_expr, parse_macro_args, yew_html,
+};
 use crate::rewrite::{
     MacroErrorKind, Rewrite, RewriteContext, RewriteError, RewriteErrorExt, RewriteResult,
 };
@@ -241,6 +243,39 @@ fn rewrite_macro_inner(
                 // If formatting fails even though parsing succeeds, return the err early
                 _ => return Err(err),
             },
+        }
+    }
+    if macro_name == "html_extractor::html!" || macro_name == "::html_extractor::html!" {
+        match html_extractor::format(context, shape, ts.clone()) {
+            Ok(rw) => return Ok(rw),
+            Err(err) => {
+                //tracing::error!("{} {}", err, context.snippet(mac.span()));
+                return Err(err);
+            }
+        }
+    }
+    if macro_name == "yew::html!" || macro_name == "::yew::html!" {
+        match yew_html::format(
+            mac.args.dspan.open,
+            mac.args.dspan.close,
+            context,
+            shape,
+            ts.clone(),
+        ) {
+            Ok(rw) => return Ok(rw),
+            Err(err) => {
+                //tracing::error!("{} {}", err, context.snippet(mac.span()));
+                return Err(err);
+            }
+        }
+    }
+    if macro_name == "rsx!" {
+        match dioxus_rsx::format(context, shape, ts.clone()) {
+            Ok(rw) => return Ok(rw),
+            Err(err) => {
+                //tracing::error!("{} {}", err, context.snippet(mac.span()));
+                return Err(err);
+            }
         }
     }
 

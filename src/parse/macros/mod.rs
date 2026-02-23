@@ -11,7 +11,10 @@ use crate::rewrite::RewriteContext;
 
 pub(crate) mod cfg_if;
 pub(crate) mod cfg_match;
+pub(crate) mod dioxus_rsx;
+pub(crate) mod html_extractor;
 pub(crate) mod lazy_static;
+pub(crate) mod yew_html;
 
 fn build_stream_parser<'a>(psess: &'a ParseSess, tokens: TokenStream) -> Parser<'a> {
     Parser::new(psess, tokens, MACRO_ARGUMENTS).recovery(Recovery::Forbidden)

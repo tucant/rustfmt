@@ -210,6 +210,7 @@ impl ListItem {
 pub(crate) enum Separator {
     Comma,
     VerticalBar,
+    Space,
 }
 
 impl Separator {
@@ -219,6 +220,8 @@ impl Separator {
             Separator::Comma => 2,
             // 3 = ` | `
             Separator::VerticalBar => 3,
+            // 1 = ` `
+            Separator::Space => 1,
         }
     }
 }
